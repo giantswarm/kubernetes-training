@@ -18,3 +18,9 @@ Future Features:
 - [Kubectl login subcommand](https://github.com/kubernetes/features/issues/32)
 - for a lot more see:
   - [Feature Tracking and Backlog](https://github.com/kubernetes/features/issues)
+
+
+Kelsey Hightower (@kelseyhightower) [August 3, 2016](https://twitter.com/kelseyhightower/status/760832204100345856)
+> In the future we will see tons of Kubernetes controllers that focus on managing complex applications such as multi-node redis clusters.
+> These controllers will be driven by declarative configs and actually manage applications; not simply deploy them. There is a difference.
+> Future Kubernetes controllers will not be generic. They will be hyper focused on a single application and will be driven by third parties.

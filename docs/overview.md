@@ -12,7 +12,17 @@ Microservices are ..
 Kubernetes consists of .. main components:
 
 - one Apiserver
--
+  http://kubernetes.io/docs/admin/kube-apiserver/
+- kube-controller-manager
+  http://kubernetes.io/docs/admin/kube-controller-manager/
+  replication controller, endpoints controller, namespace controller, and serviceaccounts controller.
+- kube-proxy
+  http://kubernetes.io/docs/admin/kube-proxy/
+- kube-scheduler
+  http://kubernetes.io/docs/admin/kube-scheduler/
+- kubelet
+  http://kubernetes.io/docs/admin/kubelet/
+
 
 Idea: declarative state is constantly compared to running state.
 
@@ -20,6 +30,8 @@ Idea: declarative state is constantly compared to running state.
 *Reference:*
 - [What is Kubernetes?](http://kubernetes.io/docs/whatisk8s/)
 - [Design Principles](https://github.com/kubernetes/kubernetes/blob/master/docs/design/principles.md)
+- [Kubernetes Design Overview](https://github.com/kubernetes/kubernetes/blob/master/docs/design/README.md)
+- [Kubernetes architecture](https://github.com/kubernetes/kubernetes/blob/master/docs/design/architecture.md)
 
 
 ## Features
