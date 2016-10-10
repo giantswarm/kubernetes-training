@@ -13,7 +13,7 @@ For each session:
     Or maybe we could also pin all flip charts in advance, turned reverse. Including times and breaks as a timeline.
       - "Fun" questions like number of open-issues, top contributors/companies, .., maybe also a bit about docker, rkt, etc.
 
-At the end provide sheet for evaluation?
+At the end provide sheet for evaluation? or maybe quick online survey?
 
 
 FIXME
@@ -65,17 +65,21 @@ Session "Warm up"
     - https://www.researchgate.net/publication/297595470_Borg_Omega_and_Kubernetes
       "Borg, Omega, and Kubernetes" January 2016
   - Stakeholder?
-    - Google, RedHat, CoreOS, Microsoft, Canonical
+    - Google, RedHat, CoreOS, Microsoft, Canonical,..
   - Organization of development and community
-    - GitHub, Slack, SGIs
-    - example: sig-livecycle, kubeadm
+    - GitHub, Slack, SIGs
+    - example: sig-clusterlifecycle (->kubeadm), sig-ui (-> dashboard)
+  - main reasons for Kubernetes
+    - primitives
+    - community
+    - no lock-in
 
 11:00
 Session "Running Containers and Exposing Services I"
   - Minikube
     - start, dashboard, does it work?
   - Pod, ReplicaSet, Deployment
-  - Services, Ingress
+  - Services, Ingress (maybe keep ingress theory only)
     - FIXME curl against ip + "from header"?
   - From `kubectl run/expose` to manifests
 
@@ -86,15 +90,16 @@ Hands-on
 
 
 12:00
-Session "Running Containers and Exposing Services I"
+Session "Running Containers and Exposing Services II"
   - more on labels and selectors
-    - from ingress to pod
+    - from (ingress)/port->service->pod
 
   - delete by selectors
   - namespaces
     - delete whole namespace
     - slides from thokin on namespaces?
-  - [Node affinity](http://kubernetes.io/docs/user-guide/node-selection/#alpha-feature-in-kubernetes-v12-node-affinity)
+  - Node Selectors
+    - [Node affinity](http://kubernetes.io/docs/user-guide/node-selection/#alpha-feature-in-kubernetes-v12-node-affinity)
   - Configmaps, Secrets
   - Daemonsets, Jobs
 
@@ -119,10 +124,21 @@ Session "Monitoring and Logging"
 
 15:00
 Session "Rolling Updates, multiple Environments"
-  - TBD
+  - Deployment Update
+    - rolling update
+      - strategies
+    - blue/green & canary
+    - roll back
+    - audit log
+  - multiple environments
+    - isolation by namespaces
+    - isolation by clusters (federation as bonus)
+    - switching namespaces
+    - switching clusters
+    - keeping different configmaps and secrets per env
 
 16:00
-Session "Storage and Outlook"
+Session "Outlook"
 
   - Roadmap
     - Current alpha/beta features
@@ -130,6 +146,7 @@ Session "Storage and Outlook"
 
   - Reuse/Community
     - Helm
+    - kpm
 
   - Storage
     - PetSets
@@ -146,11 +163,3 @@ Session "Storage and Outlook"
     - some real numbers?
       - bottlenecks? etcd2?
     - Federation
-
-  - Alternatives
-    - Openshift
-    - Mesos/Mesosphere
-    - Rancher
-    - Docker/rkt/systemd-nspawn
-      https://tectonic.com/blog/minikube-and-rkt.html
-    - CoreOS/Atomic/Ubuntu Core/Rancher OS
