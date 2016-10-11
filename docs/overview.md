@@ -1,6 +1,17 @@
 # Overview
 
-Kubernetes is a platform for managing distributed applications based on the microservices architecture.
+## Kubernetes
+
+Kubernetes is a platform for managing containerized distributed applications based on the microservices architecture.
+
+![Scalable](/img/scalable.png) *Planet Scale*
+Designed on the same principles that allows Google to run billions of containers a week, Kubernetes can scale without increasing your ops team.
+
+![Blocks](/img/blocks.png)*Never Outgrow*
+Whether testing locally or running a global enterprise, Kubernetes flexibility grows with you to deliver your applications consistently and easily no matter how complex your need is.
+
+![Suitcase](/img/suitcase.png)*Run Anywhere*
+Kubernetes is open source giving you the freedom to take advantage of on-premise, hybrid, or public cloud infrastructure, letting you effortlessly move workloads to where it matters to you.
 
 ## Excourse Distributed Systems & Microservices
 
@@ -23,10 +34,13 @@ Availabiliy = MTBF / (MTBF + MTTR)
 
 Focus on minimizing MTTR instead of MTBF
 
-### Further Reading
+## History
 
-- [Introduction to Microservice Architectures](https://giantswarm.io/microservices/)
-- [The 12-Factor App](https://12factor.net/)
+Based on 15 years of experience of running production workloads at Google.
+["Borg, Omega, and Kubernetes" March 2016](http://queue.acm.org/detail.cfm?id=2898444)
+
+Coordination and consensus via Paxos (etcd). 
+["Consensus in the Cloud: Paxos Systems Demystified" February 2016](https://www.cse.buffalo.edu/tech-reports/2016-02.pdf)
 
 ## Architecture
 
@@ -47,19 +61,20 @@ Focus on minimizing MTTR instead of MTBF
 - kubelet
   http://kubernetes.io/docs/admin/kubelet/
 
+![Kubernetes Architecture](/img/architecture.png)
 
-Idea: declarative state is constantly compared to running state.
+### Core Principles 
 
+*Portable*
+public, private, hybrid, multi-cloud
 
-### Reference
-- [What is Kubernetes?](http://kubernetes.io/docs/whatisk8s/)
-- [Design Principles](https://github.com/kubernetes/kubernetes/blob/master/docs/design/principles.md)
-- [Kubernetes Design Overview](https://github.com/kubernetes/kubernetes/blob/master/docs/design/README.md)
-- [Kubernetes architecture](https://github.com/kubernetes/kubernetes/blob/master/docs/design/architecture.md)
+*Extensible*
+modular, pluggable, hookable, composable
+
+*Self-healing*
+auto-placement, auto-restart, auto-replication, auto-scaling
 
 ## Features
-
-FIXME! what do we cover during this workshop?
 
 Feature list as of Kubernetes v1.4 from the [official documentation](http://kubernetes.io/docs/whatisk8s/):
 - co-locating helper processes, facilitating composite applications and preserving the one-application-per-container model,
@@ -76,28 +91,44 @@ Feature list as of Kubernetes v1.4 from the [official documentation](http://kube
 - support for introspection and debugging, and
 - identity and authorization.
 
-
-
-## History
-
-- Borg/Omega?
-- Paxos/Chubby?
-- https://www.researchgate.net/publication/297595470_Borg_Omega_and_Kubernetes
-  "Borg, Omega, and Kubernetes" January 2016
-
 ## Community
+
+![Community](/img/community.png)
 
 https://github.com/kubernetes/kubernetes
 
-~900 Contributors
-from Google, Red Hat, Microsoft, CoreOS, Mesosphere
+~900 Contributors and growing
+from Google, Red Hat, Microsoft, CoreOS, Mesosphere, and many more
+
+Companies using
+ebay, box, Goldman Sachs, OpenAI, and many more
 
 Release Cycle: about every [three months](https://github.com/kubernetes/features/blob/master/release-1.5/release-1.5.md)
 
 Runs on [RaspberryPi](https://github.com/luxas/kubernetes-on-arm)
 
-## Main reasons
+## Main reasons to choose Kubernetes
 
-- primitives
-- community
-- no lock-in
+- Mature Platform
+    - 15 years of experience at Google
+    - Best-of-breed ideas and practices from the community
+- Vibrant and active community that is inclusive
+- Primitives instead of Frameworks
+- Low lock-in to single technologies
+    - Through abstraction of container engine, networking, storage
+
+## Further Reading
+
+### Kubernetes
+
+- [What is Kubernetes?](http://kubernetes.io/docs/whatisk8s/)
+- [Design Principles](https://github.com/kubernetes/kubernetes/blob/master/docs/design/principles.md)
+- [Kubernetes Design Overview](https://github.com/kubernetes/kubernetes/blob/master/docs/design/README.md)
+- [Kubernetes architecture](https://github.com/kubernetes/kubernetes/blob/master/docs/design/architecture.md)
+- [Why Kubernetes is Foundational for Fortune 500 Digital Transformation (and the Cloud Infrastructure Management Landscape)](http://www.work-bench.com/blog/2016/07/12/why-kubernetes-is-foundational-for-fortune-500-digital-transformation)
+- [The Rapid Evolution of Kubernetes](http://redmonk.com/fryan/2015/08/10/the-rapid-evolution-kubernetes/)
+
+### Microservices
+
+- [Introduction to Microservice Architectures](https://giantswarm.io/microservices/)
+- [The 12-Factor App](https://12factor.net/)
