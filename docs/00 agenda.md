@@ -52,7 +52,7 @@ Rough path through hands-on:
 Croissants and coffee, round of introductions.
 
 10:00
-Session "Warm up"
+Session "Overview"
   - Idea behind the Kubernetes architecture
     - api for scaling, upgrades, failure tolerance
     - each pod gets own ip
@@ -119,8 +119,7 @@ Session "Monitoring and Logging"
     - explain Job to configure Grafana here
     - explain labels
       - docker/cadvisor/kubernetes
-  - FIXME find demo app like "Thux" but without the need of personal api-keys.
-    maybe a crawler for news sites that collects the titles of articles to create a word cloud?
+  - Use "Thux" but create 1 or more general api-keys for testing that we then delete later.
 
 15:00
 Session "Rolling Updates, multiple Environments"
