@@ -79,6 +79,7 @@ Session "Running Containers and Exposing Services I"
   - Minikube
     - start, dashboard, does it work?
   - Pod, ReplicaSet, Deployment
+  - labels & selectors
   - Services, Ingress (maybe keep ingress theory only)
     - FIXME curl against ip + "from header"?
   - From `kubectl run/expose` to manifests
