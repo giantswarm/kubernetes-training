@@ -73,8 +73,34 @@ Once you're confident that your new release is working as intended you can updat
 
 ## Multiple Environments
 
-- isolation by namespaces
-- isolation by clusters (federation as bonus)
+### Multiple Environments & Isolation
+
+When talking about multiple environments, there are many variables implied that need clarfication before choosing a fitting solution.
+
+The first variable is the number of environment types needed, as in dev, testing, QA, pre-prod, prod, etc.
+
+The second variable is if there are multiple teams and if these teams need separate environments.
+
+However, these two variables only define the number of environments. On top of that the organization needs to decide on what level of isolation between environments is desired or in bigger organizations even required by compliance & security.
+
+### Separating Environments in Kubernetes
+
+The most native way of separating environments in Kubernetes is using Namespaces. However, there's also the option to use completely separate clusters if isolation requirements are high.
+
+### Isolation by Namespaces
+
+Namespaces bring a certain level of isolation by default. They separate all resources created in them, but only on a soft level. That is, resources like for example pods are not blocked from using resources like for example services from other namespaces. They can access services in other namespaces through their FQDN on DNS or also through accessing the Kubernetes API.
+
+If a real isolation is wanted it needs to be enforced with a combination of network policies as wellas authorization and admission rules. All of these concepts are available in Kubernetes 1.4 already. However, some of them are still being actively worked on and might change and improve in future releases.
+
+### Isolation by clusters
+ 
+
+ (federation as bonus)
+
+### Switching between environments
 - switching namespaces
 - switching clusters
+
+### Configuration and Secrets help
 - keeping different configmaps and secrets per env
