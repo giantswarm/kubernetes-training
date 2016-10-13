@@ -71,6 +71,12 @@ You can work with `kubectl rollout pause` and `kubectl rollout resume`, however,
 
 Once you're confident that your new release is working as intended you can update your first Deployment and remove the second one again.
 
+### Further Reading
+
+- [Understanding Basic Kubernetes Concepts II - Using Deployments To Manage Your Services Declaratively](https://blog.giantswarm.io/understanding-basic-kubernetes-concepts-using-deployments-manage-services-declaratively/)
+- [Deployments Reference Documentation](http://kubernetes.io/docs/user-guide/deployments/)
+- [Managing Resources Reference Documentation](http://kubernetes.io/docs/user-guide/managing-deployments/)
+
 ## Multiple Environments
 
 ### Multiple Environments & Isolation
@@ -85,7 +91,7 @@ However, these two variables only define the number of environments. On top of t
 
 ### Separating Environments in Kubernetes
 
-The most native way of separating environments in Kubernetes is using Namespaces. However, there's also the option to use completely separate clusters if isolation requirements are high.
+The most native way of separating environments in Kubernetes is using Namespaces and additionally specifiying nodes. However, there's also the option to use completely separate clusters if isolation requirements are high.
 
 ### Isolation by Namespaces
 
@@ -93,14 +99,60 @@ Namespaces bring a certain level of isolation by default. They separate all reso
 
 If a real isolation is wanted it needs to be enforced with a combination of network policies as wellas authorization and admission rules. All of these concepts are available in Kubernetes 1.4 already. However, some of them are still being actively worked on and might change and improve in future releases.
 
+## Isolation by Nodes
+
+Additionally to namespace separation, the namespaces can be setup in a way to be using different nodes in the same cluster. This does not keep them from communicating or accessing objects in other namespaces (which needs to be handled as mentioned above), but keeps evnironments from compeeting for the same physical reosurces like RAM and CPU. 
+
 ### Isolation by clusters
  
+The highest isolation is achieved by isolating when different environments result in different clusters. This way there is no interaction whatsoever between environments. However, several clusters need to be managed and keeping an overview might get complex. Further, as resources are not shared between clusters, there's potential for overhead in resource usage. Also, spinning up a new cluster is significantly slower than adding namespaces or even adding nodes.
 
- (federation as bonus)
+### Switching Namespaces
 
-### Switching between environments
-- switching namespaces
-- switching clusters
+Switching namespaces is fairly straight-forward.
 
-### Configuration and Secrets help
-- keeping different configmaps and secrets per env
+First, you can set the namespace for each `kubectl` command manually, by adding the `--namespace=<namespace-name>` to it. If you are using a number of namespaces regularly you can set aliases like the following:
+
+`alias kubectl-dev='kubectl --namespace=dev'`
+
+You can also change the default namespace of your `kubectl` configuration.
+
+```bash
+export CONTEXT=$(kubectl config view | awk '/current-context/ {print $2}')
+kubectl config set-context $CONTEXT --namespace=<namespace-name>
+```
+
+### Switching Clusters
+
+Switching clusters is a bit different as each cluster has its own set of credentials or other kind of authorization mode.
+
+Here you need to keep clusters as different contexts in your kubeconfig.
+
+You can add and change context with [`kubectl set context`](http://kubernetes.io/docs/user-guide/kubectl/kubectl_config_set-context/) and then use `kubectl config use-context <context-name>` to switch between clusters.
+
+Using a federated set of clusters would be another option. However, federation is still in it's early days, and it softens the isolation between clusters a bit.
+
+### Keep Configuration and Secrets Out of Images and Deployments
+
+To make your life easier and be able to deploy the same artifacts to different environments you should try to adhere the [Config factor](http://12factor.net/config) of the [12 factor app method](http://12factor.net/). That means you should keep configuration and secrets out of your images and in Kubernetes also try to keep them out of your Deployments.
+
+In Kubernetes you can use Config Maps and Secrets for that. Having separate Config Maps and Secrets for different environments will keep you from changing images between environments and make your life a lot easier.
+
+### Excourse Advanced Services
+
+Services are a very powerful and flexible concept in Kubernetes. Especially, if you work with different environments.
+
+Services abstract from your actual running Pods and containers, so you can have a fro example a DB Service with the same name in all your environments, but depending on the environment this DB Service points to a single DB instance, a DB cluster, or maybe in production even to an externally hosted managed DB like Amazon RDS.
+
+As long as the interface (say SQL) stays the same, your other Pods that are consuming said DB Service will always talk to the "same" Service.
+
+### Further Reading
+
+- [Understanding Basic Kubernetes Concepts III - Services Give You Abstraction](https://blog.giantswarm.io/basic-kubernetes-concepts-iii-services-give-abstraction/)
+- [Understanding Basic Kubernetes Concepts IV - Secrets and ConfigMaps](https://blog.giantswarm.io/understanding-basic-kubernetes-concepts-iv-secrets-and-configmaps/)
+- [Namespaces Reference Documentation](http://kubernetes.io/docs/user-guide/deployments/)
+- [Config Maps Reference Documentation](http://kubernetes.io/docs/user-guide/configmap/)
+- [Secrets Reference Documentation](http://kubernetes.io/docs/user-guide/secrets/)
+- [Services Reference Documentation](http://kubernetes.io/docs/user-guide/services/)
+- [Kubernetes Identity Management](https://github.com/TremoloSecurity/wiki/blob/master/kubernetes.md)
+- [Federation](https://github.com/kubernetes/kubernetes/blob/master/docs/proposals/federation.md)
