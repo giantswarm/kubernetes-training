@@ -6,6 +6,7 @@
 
 - [Scheduled Jobs](http://kubernetes.io/docs/user-guide/scheduled-jobs/)
 - [Inter-pod affinity & anti-affinity](https://github.com/kubernetes/kubernetes/blob/master/docs/design/podaffinity.md)
+- [Node affinity](http://kubernetes.io/docs/user-guidenode-selection/#alpha-feature-in-kubernetes-v12-node-affinity)
 
 ### App Deployments and Reuse
 

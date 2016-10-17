@@ -6,13 +6,27 @@
 
 ## Basic Concepts in Kubernetes II
 
-### namespaces
-   - delete whole namespace
-   - slides from thokin on namespaces?
+### Namespaces
+
+The Kubernetes documentation call Namespaces "virtual clusters" and in a way namespaces do separate the cluster into separate environments. However, namespaces do not bring isolation of resources by default. They only make sure that resources in a certain namespaces by default talk to resources in the same namespace.
+
+They are a great way of keeping your clusters orderly as you can group your deployments (and connected resources) in separate environments. For example you could have a `monitoring` namespace, which holds all your monitoring tools.
+
+You could also create a namespace for a project you're currently working on. A namespace also makes it very easy to clean up after yourself. For example, you could create a `myapp-test` namespace to test out some things you are working on and once you are done, you can delete everything with a single
+
+`kubectl delete namespace myapp-test`
+
+Another use case for namespaces is separating environments like dev, testing, QA, pre-prod, and prod (more on that later).
 
 ### Node Selectors
 
-   - [Node affinity](http://kubernetes.io/docs/user-guidenode-selection/#alpha-feature-in-kubernetes-v12-node-affinity)
+In some cases you want to schedule pods to specific nodes. This might be because you want specific pods to run on the same host and be able to communicate faster or because you have a policy of e.g. running frontends on separate machines than backends. You could also have labeled nodes based on the technologies they support, for example if you have nodes with SSDs and others with HDDs.
+
+In these cases you can use Node Selectors to let your pods be scheduled to a specific set of nodes.
+
+For this you need to first assign labels to your pods. You can do this on a per node basis or give a group of pods the same label.
+
+You then use the `nodeSelector` field in the Pod specification to select the nodes you want the pod(s) to be scheduled to.
 
 ### Config Maps
 
