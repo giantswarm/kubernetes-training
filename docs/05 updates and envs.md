@@ -154,5 +154,6 @@ As long as the interface (say SQL) stays the same, your other Pods that are cons
 - [Config Maps Reference Documentation](http://kubernetes.io/docs/user-guide/configmap/)
 - [Secrets Reference Documentation](http://kubernetes.io/docs/user-guide/secrets/)
 - [Services Reference Documentation](http://kubernetes.io/docs/user-guide/services/)
+- [Deployments Reference Documentation](http://kubernetes.io/docs/user-guide/deployments/)
 - [Kubernetes Identity Management](https://github.com/TremoloSecurity/wiki/blob/master/kubernetes.md)
 - [Federation](https://github.com/kubernetes/kubernetes/blob/master/docs/proposals/federation.md)
