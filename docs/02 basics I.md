@@ -49,7 +49,7 @@ minikube stop
 minikube delete
 ```
 
-## Basic Concepts in Kubernetes
+## Basic Concepts in Kubernetes I
 
 ### Pods
 
@@ -116,6 +116,7 @@ There are several use cases and features for Ingress:
 
 ## Further Reading
 
+- [Getting Started With A Local Kubernetes Environment](https://blog.giantswarm.io/getting-started-with-a-local-kubernetes-environment/)
 - [Minikube](https://github.com/kubernetes/minikube)
 - [Understanding Basic Kubernetes Concepts I - An Introduction To Pods, Labels, and Replicas](https://blog.giantswarm.io/understanding-basic-kubernetes-concepts-i-introduction-to-pods-labels-replicas/)
 - [Understanding Basic Kubernetes Concepts II - Using Deployments To Manage Your Services Declaratively](https://blog.giantswarm.io/understanding-basic-kubernetes-concepts-using-deployments-manage-services-declaratively/)
