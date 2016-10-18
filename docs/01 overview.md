@@ -1,16 +1,16 @@
-# Overview
+# Kubernetes Overview
 
-## Kubernetes
+## What is Kubernetes
 
 Kubernetes is a platform for managing containerized distributed applications based on the microservices architecture.
 
 ![Scalable](/img/scalable.png) *Planet Scale*
 Designed on the same principles that allows Google to run billions of containers a week, Kubernetes can scale without increasing your ops team.
 
-![Blocks](/img/blocks.png)*Never Outgrow*
+![Blocks](/img/blocks.png) *Never Outgrow*
 Whether testing locally or running a global enterprise, Kubernetes flexibility grows with you to deliver your applications consistently and easily no matter how complex your need is.
 
-![Suitcase](/img/suitcase.png)*Run Anywhere*
+![Suitcase](/img/suitcase.png) *Run Anywhere*
 Kubernetes is open source giving you the freedom to take advantage of on-premise, hybrid, or public cloud infrastructure, letting you effortlessly move workloads to where it matters to you.
 
 ## Excourse Distributed Systems & Microservices
@@ -105,17 +105,15 @@ ebay, box, Goldman Sachs, OpenAI, and many more
 
 Release Cycle: about every [three months](https://github.com/kubernetes/features/blob/master/release-1.5/release-1.5.md)
 
-Runs on [RaspberryPi](https://github.com/luxas/kubernetes-on-arm)
-
-## Main reasons to choose Kubernetes
+## Why Kubernetes
 
 - Mature Platform
-    - 15 years of experience at Google
-    - Best-of-breed ideas and practices from the community
+  - 15 years of experience at Google
+  - Best-of-breed ideas and practices from the community
 - Vibrant and active community that is inclusive
 - Primitives instead of Frameworks
 - Low lock-in to single technologies
-    - Through abstraction of container engine, networking, storage
+  - Through abstraction of container engine, networking, storage
 
 ## Further Reading
 

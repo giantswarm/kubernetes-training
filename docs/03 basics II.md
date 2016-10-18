@@ -44,7 +44,7 @@ There's also a special type of secret called imagePullSecrets. Using these you c
 
 Secrets are kept in a tmpfs and only on nodes that run pods that use those secrets. The tmpfs keeps secrets from coming to rest on the node. However, they are (currently) transmitted to and from the API server in plain text, thus, be sure to have SSL/TLS protected connections between user and API server, but also between API server and Kubelets (Giant Swarm clusters do come with both enabled by default).
 
-### Daemon Sets 
+### Daemon Sets
 
 A daemon set ensures that an instance of a specific pod is running on all (or a selection of) nodes in a cluster. It creates pods on each added node and garbage collects pods when nodes are removed from the cluster.
 
