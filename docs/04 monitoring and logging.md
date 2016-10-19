@@ -8,7 +8,7 @@ It offers a lot of integrations incl. Docker, Kubernetes, etc. and is the leadin
 
 Prometheus can also visualize your data. However, we include another open-source tool, [Grafana](http://grafana.org/), for the visualization part, as it offers a more powerful and flexible way to generate visuals and dashboards.
 
-![Grafana Screenshot](grafana_cluster_overview.png)
+![Grafana Screenshot](/img/grafana_cluster_overview.png)
 
 ## Elastic Stack for Logging
 
@@ -18,12 +18,12 @@ This stack helps you get all logs from your containers into a single searchable 
 
 With Kibana you get a nice analytics and visualization platform on top.
 
-![Kibana Screenshot](kibana.png)
+![Kibana Screenshot](/img/kibana.png)
 
 ## Twitter Hot URLs Example with Custom Metrics
 
 This Microservices example consists of multiple components working hand in hand but decoupled to collect URLs mentioned on Twitter to create a hotlist of popular URLs.
 
-![THUX Components Overview](thux-overview.png)
+![THUX Components Overview](/img/thux-overview.png)
 
 It offers a prometheus compatible metrics endpoint for custom metrics, which could be used to implement auto-scaling of the resolver workers.
