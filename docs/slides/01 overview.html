@@ -8,10 +8,11 @@
       @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
 
       body {
-        font-family: 'Roboto, Arial, sans-serif';
+        font-family: 'Roboto';
+        color: #fff;
       }
       h1, h2, h3 {
-        font-family: 'Roboto, Arial, sans-serif';
+        font-family: 'Roboto';
         font-weight: normal;
       }
       table { width: 100%; }
@@ -26,7 +27,7 @@
         color: #000;
       }
       .giantswarm {
-        font-family: 'Roboto, Arial, sans-serif';
+        font-family: 'Roboto';
         font-size: 200%;
       }
       .big-pic img {
@@ -35,6 +36,32 @@
       .mid-pic img {
         width: 30%;
       }
+
+      /* Header/Footer stuff */
+      div.header {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        height: 100px;
+        width: 100%;
+        text-align: right;
+      }
+
+      div.footer {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        height: 20px;
+        width: 100%;
+      }
+
+      div.footer span {
+        font-size: 10pt;
+        position: absolute;
+        left: 15px;
+        bottom: 2px;
+        a
+      }
     </style>
   </head>
   <body>
@@ -42,6 +69,8 @@
 
 layout: true
 class: giantswarm, blue
+<div class="header"><img src="../img/giantswarm.png" style="height: 100px;"/></div>
+<div class="footer"><span>&copy; CC Attribution-ShareAlike 3.0</span></div>
 
 ---
 
@@ -61,18 +90,15 @@ Planet Scale | Never Outgrow | Run Anywhere
 
 ---
 
-# Excourse Distributed Systems & Microservices
-
-> In microservice architectures, applications are built and deployed as simple, highly decoupled, focussed services. They connect to each other over lightweight language agnostic communication mechanisms, which often times means simple HTTP APIs and message queues. Services are built around business capabilities and independently changeable and deployable with only a bare minimum of centralized management. They are polyglot in terms of programming languages, frameworks, and data stores used. Lastly, microservices are resilient, which means they are immutable artifacts that are designed to fail and elastic in scale.
-
----
-
 # Core Ideas of Microservices Architectures
 
 - Decoupled Services
 - Lightweight Communication
+- Built around business capabilities
+- Independently changeable and deployable
 - Polyglot
 - Resilience
+  - Immutable Artifacts
   - Designed To Fail
   - Elastic in Scale
 
@@ -106,14 +132,14 @@ class: white
 
 # Core Principles 
 
-*Portable*
-public, private, hybrid, multi-cloud
+Portable
+- public, private, hybrid, multi-cloud
 
-*Extensible*
-modular, pluggable, hookable, composable
+Extensible
+- modular, pluggable, hookable, composable
 
-*Self-healing*
-auto-placement, auto-restart, auto-replication, auto-scaling
+Self-healing
+- auto-placement, auto-restart, auto-replication, auto-scaling
 
 ---
 
@@ -125,6 +151,11 @@ auto-placement, auto-restart, auto-replication, auto-scaling
 - application health checking,
 - replicating application instances,
 - horizontal auto-scaling,
+
+---
+
+# Kubernetes Features continued
+
 - naming and discovery,
 - load balancing,
 - rolling updates,

@@ -8,10 +8,11 @@
       @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
 
       body {
-        font-family: 'Roboto, Arial, sans-serif';
+        font-family: 'Roboto';
+        color: #fff;
       }
       h1, h2, h3 {
-        font-family: 'Roboto, Arial, sans-serif';
+        font-family: 'Roboto';
         font-weight: normal;
       }
       table { width: 100%; }
@@ -26,7 +27,7 @@
         color: #000;
       }
       .giantswarm {
-        font-family: 'Roboto, Arial, sans-serif';
+        font-family: 'Roboto';
         font-size: 200%;
       }
       .big-pic img {
@@ -35,6 +36,32 @@
       .mid-pic img {
         width: 30%;
       }
+
+      /* Header/Footer stuff */
+      div.header {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        height: 100px;
+        width: 100%;
+        text-align: right;
+      }
+
+      div.footer {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        height: 20px;
+        width: 100%;
+      }
+
+      div.footer span {
+        font-size: 10pt;
+        position: absolute;
+        left: 15px;
+        bottom: 2px;
+        a
+      }
     </style>
   </head>
   <body>
@@ -42,6 +69,8 @@
 
 layout: true
 class: giantswarm, blue
+<div class="header"><img src="../img/giantswarm.png" style="height: 100px;"/></div>
+<div class="footer"><span>&copy; CC Attribution-ShareAlike 3.0</span></div>
 
 ---
 
@@ -63,15 +92,13 @@ class: center, middle, giantswarm, blue
 
 # Update Strategies
 
-There's 2 update strategies:
-- `Recreate`
-- `RollingUpdate`
+- There's 2 update strategies:
+  - `Recreate`
+  - `RollingUpdate`
 
-Rolling updates can be adjusted by 2 variables:
-- `maxUnavailable`
-    - Defines the number (or percentage) of Pods that can be unavailable during the update process.
-- `maxSurge`
-    - Specifies the maximum number (or percentage) of Pods that can be created above the desired number of Pods.
+- Rolling updates can be adjusted by 2 variables:
+  - `maxUnavailable` defines the number (or percentage) of Pods that can be unavailable during the update process.
+  - `maxSurge` specifies the maximum number (or percentage) of Pods that can be created above the desired number of Pods.
 
 ---
 
