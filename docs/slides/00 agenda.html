@@ -7,18 +7,49 @@
       @import url(https://fonts.googleapis.com/css?family=Roboto);
       @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
 
-      body { font-family: 'Roboto, Arial, sans-serif'; }
+      body {
+        font-family: 'Roboto, Arial, sans-serif';
+      }
       h1, h2, h3 {
         font-family: 'Roboto, Arial, sans-serif';
         font-weight: normal;
       }
+      table { width: 100%; }
+      td { text-align: center; }
       .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .blue {
+        background-color: #285772;
+        color: #fff;
+      }
+      .white {
+        background-color: #fff;
+        color: #000;
+      }
+      .giantswarm {
+        font-family: 'Roboto, Arial, sans-serif';
+        font-size: 200%;
+      }
+      .big-pic img {
+        width: 95%;
+      }
+      .mid-pic img {
+        width: 30%;
+      }
     </style>
   </head>
   <body>
     <textarea id="source">
 
-class: center, middle
+layout: true
+class: giantswarm, blue
+
+--
+
+class: center, middle, giantswarm, blue
+
+.mid-pic[![Giant Swarm](../img/giantswarm.png)]
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+.mid-pic[![Kubernetes](../img/kubernetes.png)]
 
 # Giant Swarm Kubernetes Training Day
 
@@ -37,7 +68,11 @@ by Tobias Bradtke & Puja Abbassi
 
 ---
 
+class: center, middle, giantswarm, blue
+
 # Croissants, Coffee, and Introductions
+
+.mid-pic[![Coffee](../img/coffee.png)]
 
     </textarea>
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">

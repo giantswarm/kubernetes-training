@@ -7,18 +7,45 @@
       @import url(https://fonts.googleapis.com/css?family=Roboto);
       @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
 
-      body { font-family: 'Roboto, Arial, sans-serif'; }
+      body {
+        font-family: 'Roboto, Arial, sans-serif';
+      }
       h1, h2, h3 {
         font-family: 'Roboto, Arial, sans-serif';
         font-weight: normal;
       }
+      table { width: 100%; }
+      td { text-align: center; }
       .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .blue {
+        background-color: #285772;
+        color: #fff;
+      }
+      .white {
+        background-color: #fff;
+        color: #000;
+      }
+      .giantswarm {
+        font-family: 'Roboto, Arial, sans-serif';
+        font-size: 200%;
+      }
+      .big-pic img {
+        width: 95%;
+      }
+      .mid-pic img {
+        width: 30%;
+      }
     </style>
   </head>
   <body>
     <textarea id="source">
 
-class: center, middle
+layout: true
+class: giantswarm, blue
+
+--
+
+class: center, middle, giantswarm, blue
 
 # Kubernetes Overview
 
@@ -28,11 +55,9 @@ class: center, middle
 
 Kubernetes is a platform for managing containerized distributed applications based on the microservices architecture.
 
-![Scalable](../img/scalable.png) *Planet Scale*
-
-![Blocks](../img/blocks.png) *Never Outgrow*
-
-![Suitcase](../img/suitcase.png) *Run Anywhere*
+![Scalable](../img/scalable.png) | ![Blocks](../img/blocks.png) | ![Suitcase](../img/suitcase.png)
+------------- | ------------- | -------------
+Planet Scale | Never Outgrow | Run Anywhere
 
 ---
 
@@ -71,9 +96,11 @@ Coordination and consensus via Paxos (etcd).
 
 ---
 
+class: white
+
 # Kubernetes Architecture
 
-![Kubernetes Architecture](/img/architecture.png)
+.center[.big-pic[![Kubernetes Architecture](../img/architecture.png)]]
 
 ---
 
@@ -92,7 +119,6 @@ auto-placement, auto-restart, auto-replication, auto-scaling
 
 # Kubernetes Features
 
-Feature list as of Kubernetes v1.4 from the [official documentation](http://kubernetes.io/docs/whatisk8s/):
 - co-locating helper processes, facilitating composite applications and preserving the one-application-per-container model,
 - mounting storage systems,
 - distributing secrets,
@@ -109,7 +135,13 @@ Feature list as of Kubernetes v1.4 from the [official documentation](http://kube
 
 ---
 
+class: white
+
 # Community
+
+.center[.big-pic[![Kubernetes Community](../img/community.png)]]
+
+???
 
 https://github.com/kubernetes/kubernetes
 
@@ -137,7 +169,7 @@ Release Cycle: about every [three months](https://github.com/kubernetes/features
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
     </script>
     <script>
-      var slideshow = remark.create();
+      var slideshow = remark.create({ratio: '16:9'});
     </script>
   </body>
 </html>
