@@ -1,25 +1,51 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Title</title>
+    <title>Running Containers and Exposing Services II</title>
     <meta charset="utf-8">
     <style>
-      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
-      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Roboto);
       @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
 
-      body { font-family: 'Droid Serif'; }
+      body {
+        font-family: 'Roboto, Arial, sans-serif';
+      }
       h1, h2, h3 {
-        font-family: 'Yanone Kaffeesatz';
+        font-family: 'Roboto, Arial, sans-serif';
         font-weight: normal;
       }
+      table { width: 100%; }
+      td { text-align: center; }
       .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .blue {
+        background-color: #285772;
+        color: #fff;
+      }
+      .white {
+        background-color: #fff;
+        color: #000;
+      }
+      .giantswarm {
+        font-family: 'Roboto, Arial, sans-serif';
+        font-size: 200%;
+      }
+      .big-pic img {
+        width: 95%;
+      }
+      .mid-pic img {
+        width: 30%;
+      }
     </style>
   </head>
   <body>
     <textarea id="source">
 
-class: center, middle
+layout: true
+class: giantswarm, blue
+
+--
+
+class: center, middle, giantswarm, blue
 
 # Basic Concepts in Kubernetes II
 
@@ -103,7 +129,7 @@ class: center, middle
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
     </script>
     <script>
-      var slideshow = remark.create();
+      var slideshow = remark.create({ratio: '16:9'});
     </script>
   </body>
 </html>

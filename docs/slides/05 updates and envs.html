@@ -1,25 +1,51 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Title</title>
+    <title>Rolling Updates & Multiple Environments</title>
     <meta charset="utf-8">
     <style>
-      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
-      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Roboto);
       @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
 
-      body { font-family: 'Droid Serif'; }
+      body {
+        font-family: 'Roboto, Arial, sans-serif';
+      }
       h1, h2, h3 {
-        font-family: 'Yanone Kaffeesatz';
+        font-family: 'Roboto, Arial, sans-serif';
         font-weight: normal;
       }
+      table { width: 100%; }
+      td { text-align: center; }
       .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .blue {
+        background-color: #285772;
+        color: #fff;
+      }
+      .white {
+        background-color: #fff;
+        color: #000;
+      }
+      .giantswarm {
+        font-family: 'Roboto, Arial, sans-serif';
+        font-size: 200%;
+      }
+      .big-pic img {
+        width: 95%;
+      }
+      .mid-pic img {
+        width: 30%;
+      }
     </style>
   </head>
   <body>
     <textarea id="source">
 
-class: center, middle
+layout: true
+class: giantswarm, blue
+
+--
+
+class: center, middle, giantswarm, blue
 
 # Rolling Updates & Multiple Environments
 
@@ -46,8 +72,6 @@ Rolling updates can be adjusted by 2 variables:
     - Defines the number (or percentage) of Pods that can be unavailable during the update process.
 - `maxSurge`
     - Specifies the maximum number (or percentage) of Pods that can be created above the desired number of Pods.
-
-Additionally, there's `minReadySeconds` for including a delay in health checks.
 
 ---
 
@@ -105,7 +129,7 @@ Abstract from actual implementation
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
     </script>
     <script>
-      var slideshow = remark.create();
+      var slideshow = remark.create({ratio: '16:9'});
     </script>
   </body>
 </html>
