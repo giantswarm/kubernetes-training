@@ -34,7 +34,5 @@
 
 ### Scaling & Resilience
 
-- some real numbers?
-  - bottlenecks? etcd2?
 - [Federation](https://github.com/kubernetes/kubernetes/blob/master/docs/proposals/federation.md)
 - [etcd v3 API storage backend](https://github.com/kubernetes/kubernetes/issues/22448)
