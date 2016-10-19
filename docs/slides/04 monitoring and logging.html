@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Title</title>
+    <title>Monitoring and Logging Demo</title>
     <meta charset="utf-8">
     <style>
       @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
@@ -21,19 +21,39 @@
 
 class: center, middle
 
-# Title
+# Monitoring and Logging Demo
 
 ---
 
-# Agenda
+# Prometheus & Grafana for Monitoring
 
-1. Introduction
-2. Deep-dive
-3. ...
+Prometheus is a monitoring solution that offers good integration with Kubernetes and Docker.
+
+We combine it with Grafana to offer a more powerful and flexible way to generate visuals and dashboards.
+
+![Grafana Screenshot](/img/grafana_cluster_overview.png)
 
 ---
 
-# Introduction
+# Elastic Stack for Logging
+
+The Elastic stack is most prominently know in form of the ELK stack. Here we use the more recent combination of Filebeat, Elasticsearch, and Kibana.
+
+This stack helps you get all logs from your containers into a single searchable data store.
+
+With Kibana you get a nice analytics and visualization platform on top.
+
+![Kibana Screenshot](/img/kibana.png)
+
+---
+
+# Twitter Hot URLs Example with Custom Metrics
+
+This Microservices example consists of multiple components working hand in hand but decoupled to collect URLs mentioned on Twitter to create a hotlist of popular URLs.
+
+![THUX Components Overview](/img/thux-overview.png)
+
+It offers a prometheus compatible metrics endpoint for custom metrics, which could be used to implement auto-scaling of the resolver workers.
 
     </textarea>
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">

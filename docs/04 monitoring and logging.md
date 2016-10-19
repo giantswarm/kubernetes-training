@@ -4,7 +4,7 @@
 
 [Prometheus](https://prometheus.io/) is an open-source monitoring solution that includes the gathering of metrics, their storage in an internal time series database as well as querying and alerting based on that data.
 
-It offers a lot of integrations incl. Docker, Kubernetes, etc. and is the leading solution in practice in the ecosystem.
+It is part of the CNCF and offers a lot of integrations incl. Docker, Kubernetes, etc. and is the leading solution in practice in the ecosystem.
 
 Prometheus can also visualize your data. However, we include another open-source tool, [Grafana](http://grafana.org/), for the visualization part, as it offers a more powerful and flexible way to generate visuals and dashboards.
 
