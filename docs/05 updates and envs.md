@@ -2,9 +2,9 @@
 
 ## Rolling Updates
 
-### Deployment Updates
+### Rolling Updates with Deployments
 
-Rolling updates to pods can be done through updates of their respective deployment. If there are more than one replica in the deployment, a rolling update will be initiated. Kubernetes monitors the update and automatically stop and stops a rollout if the health the new/updated pods fail.
+Rolling updates to pods can be done through updates of their respective deployment. If there are more than one replica in the deployment, a rolling update will be initiated. Kubernetes monitors the update and automatically stop a rollout if the health the new/updated pods fail.
 
 ### How to update
 
@@ -97,13 +97,13 @@ The most native way of separating environments in Kubernetes is using Namespaces
 
 Namespaces bring a certain level of isolation by default. They separate all resources created in them, but only on a soft level. That is, resources like for example pods are not blocked from using resources like for example services from other namespaces. They can access services in other namespaces through their FQDN on DNS or also through accessing the Kubernetes API.
 
-If a real isolation is wanted it needs to be enforced with a combination of network policies as wellas authorization and admission rules. All of these concepts are available in Kubernetes 1.4 already. However, some of them are still being actively worked on and might change and improve in future releases.
+If a real isolation is wanted it needs to be enforced with a combination of network policies as well as authorization and admission rules. All of these concepts are available in Kubernetes 1.4 already. However, some of them are still being actively worked on and might change and improve in future releases.
 
 ## Isolation by Nodes
 
 Additionally to namespace separation, the namespaces can be setup in a way to be using different nodes in the same cluster. This does not keep them from communicating or accessing objects in other namespaces (which needs to be handled as mentioned above), but keeps evnironments from compeeting for the same physical reosurces like RAM and CPU. 
 
-### Isolation by clusters
+### Isolation by Clusters
  
 The highest isolation is achieved by isolating when different environments result in different clusters. This way there is no interaction whatsoever between environments. However, several clusters need to be managed and keeping an overview might get complex. Further, as resources are not shared between clusters, there's potential for overhead in resource usage. Also, spinning up a new cluster is significantly slower than adding namespaces or even adding nodes.
 
