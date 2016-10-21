@@ -157,3 +157,4 @@ As long as the interface (say SQL) stays the same, your other Pods that are cons
 - [Deployments Reference Documentation](http://kubernetes.io/docs/user-guide/deployments/)
 - [Kubernetes Identity Management](https://github.com/TremoloSecurity/wiki/blob/master/kubernetes.md)
 - [Federation](https://github.com/kubernetes/kubernetes/blob/master/docs/proposals/federation.md)
+- [Taints, Tolerations, and Dedicated Nodes](https://github.com/kubernetes/kubernetes/blob/release-1.4/docs/design/taint-toleration-dedicated.md)

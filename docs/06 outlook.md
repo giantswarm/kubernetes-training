@@ -7,6 +7,7 @@
 - [Scheduled Jobs](http://kubernetes.io/docs/user-guide/scheduled-jobs/)
 - [Inter-pod affinity & anti-affinity](https://github.com/kubernetes/kubernetes/blob/master/docs/design/podaffinity.md)
 - [Node affinity](http://kubernetes.io/docs/user-guidenode-selection/#alpha-feature-in-kubernetes-v12-node-affinity)
+- [Taints, Tolerations, and Dedicated Nodes](https://github.com/kubernetes/kubernetes/blob/release-1.4/docs/design/taint-toleration-dedicated.md)
 
 ### App Deployments and Reuse
 
