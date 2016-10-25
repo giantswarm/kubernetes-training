@@ -17,11 +17,7 @@
 ### Usage
 
 ```bash
-minikube start \
-  --vm-driver kvm \
-  --memory 2048 \
-  --logtostderr true \
-  --v 4
+minikube start
 ```
 
 ```bash
@@ -83,7 +79,7 @@ As mentioned-above pods are ephemeral by themsleves and do not get rescheduled i
 
 When the deployment gets created it creates a replica set, which in turns creates pods in the cluster. Thus, the chain is like following: Deployment -> Replica Set -> Pod(s).
 
-The replica set ensures that a specific number of pods (desired state) is always running in the cluster. 
+The replica set ensures that a specific number of pods (desired state) is always running in the cluster.
 
 ### Services
 
@@ -101,7 +97,7 @@ In case you want to use another type of service discovery and don't want the loa
 
 ### Ingress
 
-An Ingress is a collection of rules that allow inbound connections from outside the cluster to reach the cluster services. It can be configured to give services externally-reachable URLs, load balance traffic, terminate SSL, offer name based virtual hosting etc. 
+An Ingress is a collection of rules that allow inbound connections from outside the cluster to reach the cluster services. It can be configured to give services externally-reachable URLs, load balance traffic, terminate SSL, offer name based virtual hosting etc.
 
 An Ingress controller is responsible for fulfilling the Ingress, usually with a loadbalancer, though it may also configure an edge router or additional frontends to help handle the traffic in an HA manner.
 

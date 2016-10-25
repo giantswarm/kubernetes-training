@@ -1,7 +1,5 @@
 ## Basic Concepts in Kubernetes I
 
-FIXME rename webservice to webpage?
-
 ### Pods
 
 #### Run
@@ -119,7 +117,7 @@ kubectl expose deployment webservice \
 > --cluster-ip string<br/>
     ClusterIP to be assigned to the service. Leave empty to auto-allocate, or set to 'None' to create a headless service.
 
-FIXME headless, example "prometheus"?, later
+FIXME headless, example "prometheus-node-exporter"?, later
 
 ```bash
 kubectl get services \
