@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Running Containers and Exposing Services I</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Roboto);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body {
+        font-family: 'Roboto';
+        color: #fff;
+      }
+      h1, h2, h3 {
+        font-family: 'Roboto';
+        font-weight: normal;
+      }
+      table { width: 100%; }
+      td { text-align: center; }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+      .blue {
+        background-color: #285772;
+        color: #fff;
+      }
+      .white {
+        background-color: #fff;
+        color: #000;
+      }
+      .giantswarm {
+        font-family: 'Roboto';
+        font-size: 200%;
+      }
+      .big-pic img {
+        width: 95%;
+      }
+      .mid-pic img {
+        width: 30%;
+      }
+
+      /* Header/Footer stuff */
+      div.header {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        height: 100px;
+        width: 100%;
+        text-align: right;
+      }
+
+      div.footer {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        height: 20px;
+        width: 100%;
+      }
+
+      div.footer span {
+        font-size: 10pt;
+        position: absolute;
+        left: 15px;
+        bottom: 2px;
+        a
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+layout: true
+class: giantswarm, blue
+<div class="header"><img src="../img/giantswarm.png" style="height: 100px;"/></div>
+<div class="footer"><span>&copy; CC Attribution-ShareAlike 3.0</span></div>
+
+---
+
+class: center, middle, giantswarm, blue
+
+# Running Containers and Exposing Services I
+
+---
+
+# Minikube
+
+> Minikube is a tool that makes it easy to run Kubernetes locally. Minikube runs a single-node Kubernetes cluster inside a VM on your laptop
+
+---
+
+# Minikube - Current Features
+
+- DNS
+- NodePorts
+- ConfigMaps and Secrets
+- Dashboards
+- Container Runtime: Docker and rkt
+- Enabling CNI (Container Network Interface)
+
+---
+
+# Pods
+
+- Smallest deployable units of computing
+- Contain one or more containers
+- Containers inside the pod
+  - share namespaces
+  - are scheduled together
+- Emphemeral (won't be rescheduled)
+
+---
+
+# Labels & Selectors
+
+- Labels
+  - Key/value pairs that can be attached to objects
+    - e.g. to pods, volumes, nodes, etc.
+- Selectors
+  - Select (group of) objects based on labels
+
+---
+
+# Deployments (& Replica Sets)
+
+- Declarative way of deploying Pods
+- Manages a Replica Set that in turn manages Pods
+- Ensures that the desired number of Pods is running
+
+---
+
+# Services
+
+- Abstraction layer on top of Pods
+- Defines a logical set of Pods
+- Defines a policy by which to access those
+- Assigns them a single (virtual) service IP
+- Takes care of simple load balancing
+- Discovery via DNS
+
+---
+
+# Ingress
+
+An Ingress is a collection of rules that allow inbound connections from outside the cluster to reach the cluster services.
+
+Features
+- Externally-reachable URLs
+- Load balance traffic
+- Terminate SSL
+- Name based virtual hosting
+
+    </textarea>
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create({ratio: '16:9'});
+    </script>
+  </body>
+</html>

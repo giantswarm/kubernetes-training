@@ -1,1 +1,3 @@
-# kubernetes-training
+# Kubernetes Training
+
+See [docs](docs/)
