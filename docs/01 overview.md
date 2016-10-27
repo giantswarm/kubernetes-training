@@ -4,13 +4,13 @@
 
 Kubernetes is a platform for managing containerized distributed applications based on the microservices architecture.
 
-![Scalable](/img/scalable.png) *Planet Scale*
+![Scalable](img/scalable.png) *Planet Scale*
 Designed on the same principles that allows Google to run billions of containers a week, Kubernetes can scale without increasing your ops team.
 
-![Blocks](/img/blocks.png) *Never Outgrow*
+![Blocks](img/blocks.png) *Never Outgrow*
 Whether testing locally or running a global enterprise, Kubernetes flexibility grows with you to deliver your applications consistently and easily no matter how complex your need is.
 
-![Suitcase](/img/suitcase.png) *Run Anywhere*
+![Suitcase](img/suitcase.png) *Run Anywhere*
 Kubernetes is open source giving you the freedom to take advantage of on-premise, hybrid, or public cloud infrastructure, letting you effortlessly move workloads to where it matters to you.
 
 ## Excourse Distributed Systems & Microservices
@@ -61,7 +61,7 @@ Coordination and consensus via Paxos (etcd).
 - kubelet
   http://kubernetes.io/docs/admin/kubelet/
 
-![Kubernetes Architecture](/img/architecture.png)
+![Kubernetes Architecture](img/architecture.png)
 
 ### Core Principles 
 
@@ -93,7 +93,7 @@ Feature list as of Kubernetes v1.4 from the [official documentation](http://kube
 
 ## Community
 
-![Community](/img/community.png)
+![Community](img/community.png)
 
 https://github.com/kubernetes/kubernetes
 
