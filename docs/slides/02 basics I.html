@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
   <head>
     <title>Running Containers and Exposing Services I</title>
@@ -35,6 +35,11 @@
       }
       .mid-pic img {
         width: 30%;
+      }
+
+      .sidepic img {
+        width: 50%;
+        float: right;
       }
 
       /* Header/Footer stuff */
@@ -115,6 +120,7 @@ class: center, middle, giantswarm, blue
 
 # Pods
 
+.sidepic[![Pods](../img/Pods.png)]
 - Smallest deployable units of computing
 - Contain one or more containers
 - Containers inside the pod
@@ -126,6 +132,7 @@ class: center, middle, giantswarm, blue
 
 # Labels & Selectors
 
+.sidepic[![Labels](../img/Labels.png)]
 - Labels
   - Key/value pairs that can be attached to objects
     - e.g. to pods, volumes, nodes, etc.
@@ -136,6 +143,7 @@ class: center, middle, giantswarm, blue
 
 # Deployments (& Replica Sets)
 
+.sidepic[![Deployments](../img/Deployments.png)]
 - Declarative way of deploying Pods
 - Manages a Replica Set that in turn manages Pods
 - Ensures that the desired number of Pods is running
@@ -144,6 +152,7 @@ class: center, middle, giantswarm, blue
 
 # Services
 
+.sidepic[![Services](../img/Services.png)]
 - Abstraction layer on top of Pods
 - Defines a logical set of Pods
 - Defines a policy by which to access those
@@ -155,6 +164,7 @@ class: center, middle, giantswarm, blue
 
 # Ingress
 
+.sidepic[![Ingress](../img/Ingress.png)]
 An Ingress is a collection of rules that allow inbound connections from outside the cluster to reach the cluster services.
 
 Features
