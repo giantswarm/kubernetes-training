@@ -8,7 +8,7 @@ minikube start --vm-driver kvm
 
 On Mac run:
 ```bash
-minikube start --vm-driver hy..?
+minikube start --vm-driver=xhyve
 ```
 
 
