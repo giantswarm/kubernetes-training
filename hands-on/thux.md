@@ -59,7 +59,7 @@ minikube service --namespace logging kibana
 ## Twitter Example App
 
 ```bash
-kubectl \
+kubectl apply \
   --filename https://raw.githubusercontent.com/giantswarm/twitter-hot-urls-example/master/manifests-all.yaml
 ```
 
