@@ -3,12 +3,12 @@
 
 On Linux run:
 ```bash
-minikube start --memory 4096 --vm-driver kvm
+minikube start --memory 4096 --cpus 4 --vm-driver kvm
 ```
 
 On Mac run:
 ```bash
-minikube start --memory 4096
+minikube start --memory 4096 --cpus 4
 ```
 
 
