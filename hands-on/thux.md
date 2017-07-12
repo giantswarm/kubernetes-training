@@ -34,6 +34,7 @@ minikube dashboard
 ## Monitoring
 
 ```bash
+kubectl create namespace thux
 kubectl apply \
   --filename https://raw.githubusercontent.com/giantswarm/kubernetes-prometheus/master/manifests-all.yaml
 ```
