@@ -3,12 +3,12 @@
 
 On Linux run:
 ```bash
-minikube start --vm-driver kvm
+minikube start --memory 4096 --vm-driver kvm
 ```
 
 On Mac run:
 ```bash
-minikube start --vm-driver=xhyve
+minikube start --memory 4096
 ```
 
 
