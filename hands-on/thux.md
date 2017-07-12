@@ -72,7 +72,7 @@ minikube service --namespace logging kibana
 ```
 
 In Kibana set `filebeat-*` as `Index name or pattern` and use `json.timestamp` for fot the `Time Filter field name`.
-After that you can switche over to the `Discovery` menu item.
+After that you can switch over to the `Discovery` menu item.
 
 ## Twitter Example App
 
@@ -82,7 +82,49 @@ kubectl apply \
   --filename https://raw.githubusercontent.com/giantswarm/twitter-hot-urls-example/master/manifests-all.yaml
 ```
 
-FIXME add how to create secret here
+## Creating the Twitter api secrets manifest
 
+To really bring this application up you need to get four values from your personal Twitter [account](https://twitter.com/signup) and add them to `secrets/twitter-api-secret.yaml`. For some background see the Twitter documentation about [streaming API](https://dev.twitter.com/streaming/overview/connecting).
 
-https://github.com/giantswarm/twitter-hot-urls-example
+Go to [Twitter Application Management](https://apps.twitter.com/) and create a [new](https://apps.twitter.com/app/new) application. Enter some details like these:
+
+    Name: thux
+    Description: Tracks URLs mentioned on Twitter and creates a ranked list
+    Website: https://github.com/giantswarm/twitter-hot-urls-example
+    Callback URL: <leave this field blank>
+
+After that also create an Access Token under "Keys and Access Tokens". Create a file `twitter-api-secret.yaml` and fill all four data fields with the corresponding [`base64` encoded values]((http://kubernetes.io/docs/user-guide/secrets/#creating-a-secret-manually)).
+
+```
+# twitter-api-secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: twitter-api
+  namespace: thux
+  labels:
+    app: thux
+type: Opaque
+data:
+  # values must be base64 encoded
+  # with no a trailing newline.
+  # use something like this:
+  # printf "exampletokenxyz" | base64
+  twitter-consumer-key:
+  twitter-consumer-secret:
+  twitter-access-token:
+  twitter-access-token-secret: 
+```
+
+```bash
+kubectl apply --filename twitter-api-secret.yaml
+```
+
+## Scaling up and down
+
+```bash
+kubectl --namespace thux scale deployments/resolver --replicas 3
+
+# there is an api limit. don't track too much, to pause the tracker like this:
+kubectl --namespace thux scale deployments/tracker --replicas 0
+```
