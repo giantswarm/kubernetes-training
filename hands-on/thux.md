@@ -34,7 +34,6 @@ minikube dashboard
 ## Monitoring
 
 ```bash
-kubectl create namespace thux
 kubectl apply \
   --filename https://raw.githubusercontent.com/giantswarm/kubernetes-prometheus/master/manifests-all.yaml
 ```
@@ -60,6 +59,7 @@ minikube service --namespace logging kibana
 ## Twitter Example App
 
 ```bash
+kubectl create namespace thux
 kubectl apply \
   --filename https://raw.githubusercontent.com/giantswarm/twitter-hot-urls-example/master/manifests-all.yaml
 ```
