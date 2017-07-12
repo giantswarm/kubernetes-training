@@ -11,6 +11,21 @@ On Mac run:
 minikube start --memory 4096 --cpus 4
 ```
 
+## Preload Docker images
+
+To safe some time during the next steps, it is possible to load the needed Docker images upfront in Minikube:
+```
+minikube ssh
+```
+```
+images="docker:latest giantswarm/tiny-tools:latest redis:latest busybox:latest gcr.io/google_containers/nginx-ingress-controller:0.9.0-beta.8 quay.io/prometheus/alertmanager:v0.7.1 prom/prometheus:v1.7.0 giantswarm/helloworld:latest gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.1 gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.2 gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.2 gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.2 gcr.io/google_containers/kube-state-metrics:v0.5.0 grafana/grafana:4.2.0 kibana:5.2.2 prom/node-exporter:v0.14.0 gcr.io/google_containers/heapster:v1.3.0 giantswarm/eventrouter:0.1.2 giantswarm/tiny-tools:0.1.0 giantswarm/filebeat:5.2.2 gcr.io/google-containers/kube-addon-manager:v6.4-beta.1 docker.elastic.co/elasticsearch/elasticsearch:5.2.2 docker.elastic.co/elasticsearch/elasticsearch:5.3.3 dockermuenster/caddy:0.9.3 marian/rebrow:latest giantswarm/thux-resolver:latest giantswarm/thux-tracker:latest dockermuenster/caddy:0.9 giantswarm/thux-frontend:latest giantswarm/thux-cleaner:latest gcr.io/google_containers/pause-amd64:3.0 gcr.io/google_containers/defaultbackend:1.0"
+
+for image in $images; do
+  docker pull $image
+done
+```
+It is fine to stop Minikube after this and start later. Just don't run `minikube delete` in between.
+
 
 ## Prepare Minikube for Elastic Stack
 
