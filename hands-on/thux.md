@@ -62,6 +62,8 @@ Default username/password is "admin/admin".
 For the case the dashboards are missing run this to reconfigure them:
 ```
 kubectl --namespace monitoring delete job grafana-import-dashboards
+kubectl apply \
+  --filename https://raw.githubusercontent.com/giantswarm/kubernetes-prometheus/master/manifests-all.yaml
 ```
 
 ## Logging
