@@ -77,7 +77,7 @@ minikube service --namespace logging elasticsearch
 minikube service --namespace logging kibana
 ```
 
-In Kibana set `filebeat-*` as `Index name or pattern` and use `json.timestamp` for fot the `Time Filter field name`.
+In Kibana set `filebeat-*` as `Index name or pattern` and use `json.time` for fot the `Time Filter field name`.
 After that you can switch over to the `Discovery` menu item.
 
 ## Twitter Example App
