@@ -59,6 +59,10 @@ minikube service --namespace monitoring grafana
 
 Default username/password is "admin/admin".
 
+For the case the dashboards are missing run this to reconfigure them:
+```
+kubectl --namespace monitoring delete job grafana-import-dashboards
+```
 
 ## Logging
 
