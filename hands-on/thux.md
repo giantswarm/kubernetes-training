@@ -73,7 +73,7 @@ minikube service elasticsearch
 minikube service kibana
 ```
 
-In Kibana set `filebeat-*` as `Index name or pattern` and use `json.time` for fot the `Time Filter field name`.
+In Kibana set `fluentd-*` as `Index name or pattern`.
 After that you can switch over to the `Discovery` menu item.
 
 ## Twitter Example App
