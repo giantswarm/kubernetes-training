@@ -1,14 +1,10 @@
 
 ## Start Minikube
 
-On Linux run:
 ```bash
-minikube start --memory 4096 --cpus 4 --vm-driver kvm
-```
-
-On Mac run:
-```bash
-minikube start --memory 4096 --cpus 4
+# minikube start --memory 4096 --cpus 4 --vm-driver kvm
+# minikube start --cpus 4 --memory 4096 --kubernetes-version v1.7.7 --vm-driver kvm --bootstrapper kubeadm
+minikube start --cpus 4 --memory 4096 --kubernetes-version v1.7.7 --bootstrapper kubeadm
 ```
 
 ## Preload Docker images
@@ -18,7 +14,7 @@ To safe some time during the next steps, it is possible to load the needed Docke
 minikube ssh
 ```
 ```
-images="docker:latest giantswarm/tiny-tools:latest redis:latest busybox:latest gcr.io/google_containers/nginx-ingress-controller:0.9.0-beta.8 quay.io/prometheus/alertmanager:v0.7.1 prom/prometheus:v1.7.0 giantswarm/helloworld:latest gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.1 gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.2 gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.2 gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.2 gcr.io/google_containers/kube-state-metrics:v0.5.0 grafana/grafana:4.2.0 kibana:5.2.2 prom/node-exporter:v0.14.0 gcr.io/google_containers/heapster:v1.3.0 giantswarm/eventrouter:0.1.2 giantswarm/tiny-tools:0.1.0 giantswarm/filebeat:5.2.2 gcr.io/google-containers/kube-addon-manager:v6.4-beta.1 docker.elastic.co/elasticsearch/elasticsearch:5.2.2 docker.elastic.co/elasticsearch/elasticsearch:5.3.3 dockermuenster/caddy:0.9.3 marian/rebrow:latest giantswarm/thux-resolver:latest giantswarm/thux-tracker:latest dockermuenster/caddy:0.9 giantswarm/thux-frontend:latest giantswarm/thux-cleaner:latest gcr.io/google_containers/pause-amd64:3.0 gcr.io/google_containers/defaultbackend:1.0"
+images="fluent/fluentd-kubernetes-daemonset:v0.12.33-elasticsearch gcr.io/google_containers/kube-apiserver-amd64:v1.7.7 gcr.io/google_containers/kube-controller-manager-amd64:v1.7.7 gcr.io/google_containers/kube-proxy-amd64:v1.7.7 gcr.io/google_containers/kube-scheduler-amd64:v1.7.7 docker.elastic.co/beats/metricbeat:6.0.0-rc1 docker.elastic.co/kibana/kibana:6.0.0-rc1 docker.elastic.co/elasticsearch/elasticsearch:6.0.0-rc1 redis:latest giantswarm/tiny-tools:latest busybox:latest gcr.io/google_containers/kubernetes-dashboard-amd64:v1.6.3 gcr.io/google_containers/k8s-dns-sidecar-amd64:1.14.4 gcr.io/google_containers/k8s-dns-kube-dns-amd64:1.14.4:a8e00546bcf3 gcr.io/google_containers/k8s-dns-dnsmasq-nanny-amd64:1.14.4 gcr.io/google-containers/kube-addon-manager:v6.4-beta.2 quay.io/prometheus/alertmanager:v0.7.1 prom/prometheus:v1.7.0 gcr.io/google_containers/kube-state-metrics:v0.5.0 grafana/grafana:4.2.0 prom/node-exporter:v0.14.0 gcr.io/google_containers/etcd-amd64:3.0.17 dockermuenster/caddy:0.9.3 marian/rebrow:latest giantswarm/thux-resolver:latest giantswarm/thux-tracker:latest dockermuenster/caddy:0.9 giantswarm/thux-frontend:latest giantswarm/thux-cleaner:latest gcr.io/google_containers/pause-amd64:3.0 "
 
 for image in $images; do
   docker pull $image
@@ -27,7 +23,7 @@ done
 It is fine to stop Minikube after this and start later. Just don't run `minikube delete` in between.
 
 
-## Prepare Minikube for Elastic Stack
+<!-- ## Prepare Minikube for Elastic Stack
 
 ```bash
 minikube ssh
@@ -36,7 +32,7 @@ sudo sh -c "sed -i 's/^ExecStart=\/usr\/bin\/docker daemon.*$/& --log-opt labels
 
 sudo systemctl daemon-reload
 sudo systemctl restart docker.service
-```
+``` -->
 
 
 ## Dashboard
@@ -70,11 +66,11 @@ kubectl apply \
 
 ```bash
 kubectl apply \
-  --filename https://raw.githubusercontent.com/giantswarm/kubernetes-elastic-stack/master/manifests-all.yaml
+  --filename https://raw.githubusercontent.com/giantswarm/kubernetes-training/master/hands-on/logging-manifests-all.yaml
 ```
 ```bash
-minikube service --namespace logging elasticsearch
-minikube service --namespace logging kibana
+minikube service elasticsearch
+minikube service kibana
 ```
 
 In Kibana set `filebeat-*` as `Index name or pattern` and use `json.time` for fot the `Time Filter field name`.
@@ -119,7 +115,7 @@ data:
   twitter-consumer-key:
   twitter-consumer-secret:
   twitter-access-token:
-  twitter-access-token-secret: 
+  twitter-access-token-secret:
 ```
 
 ```bash
