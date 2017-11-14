@@ -12,9 +12,7 @@ kubectl version
 
 ```bash
 minikube start \
-  --memory 4096 \
-  --bootstrapper kubeadm \
-  --kubernetes-version v1.8.1
+  --memory 4096
 ```
 
 ## Preload Docker images
