@@ -1,0 +1,349 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: thux
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: cleaner
+  namespace: thux
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: thux
+        component: cleaner
+    spec:
+      containers:
+      - name: cleaner
+        image: giantswarm/thux-cleaner
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 8000
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: thux
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: thux
+        component: frontend
+    spec:
+      containers:
+      - name: frontend
+        imagePullPolicy: Always
+        image: giantswarm/thux-frontend
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: thux
+  labels:
+    app: thux
+    component: frontend
+spec:
+  type: NodePort
+  ports:
+  - port: 8000
+  selector:
+    app: thux
+    component: frontend
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: hotlist-redis
+  namespace: thux
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: thux
+        component: hotlist-redis
+        role: master
+        # tier: backend
+    spec:
+      containers:
+      - name: hotlist-redis
+        image: redis
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hotlist-redis
+  namespace: thux
+  labels:
+    app: thux
+    component: hotlist-redis
+    # subcomponent: redis?
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: thux
+    component: hotlist-redis
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: inbox-redis
+  namespace: thux
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: thux
+        component: inbox-redis
+    spec:
+      containers:
+      - name: thux-inbox-redis
+        image: redis
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inbox-redis
+  namespace: thux
+  labels:
+    app: thux
+    component: inbox-redis
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: thux
+    component: inbox-redis
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: rebrow
+  namespace: thux
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: thux
+        component: rebrow
+    spec:
+      containers:
+      - name: thux-rebrow
+        image: marian/rebrow:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+        - containerPort: 5001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rebrow
+  namespace: thux
+  labels:
+    app: thux
+    component: rebrow
+spec:
+  type: NodePort
+  ports:
+  - port: 5001
+  selector:
+    app: thux
+    component: rebrow
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: resolver
+  namespace: thux
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: thux
+        component: resolver
+      annotations:
+        # prometheus.io/scrape: 'true'
+        # alpha/target.custom-metrics.podautoscaler.kubernetes.io: '{"items":[{"name":"qps", "value": "10"}]}'
+        # metrics.alpha.kubernetes.io/custom-endpoints:
+        #   # path: "/metrics",
+        #   port: 9102
+        #   names: ["myMetric"]
+    spec:
+      containers:
+      - name: resolver
+        image: giantswarm/thux-resolver
+        # imagePullPolicy: Always
+        volumeMounts:
+          - name: metrics
+            mountPath: /tmp
+        # resources:
+        #   requests:
+        #     cpu: 100m
+        #     memory: 100Mi
+      - name: metrics
+        image: dockermuenster/caddy:0.9
+        command:
+          - "caddy"
+          - "-port=9102"
+          - "-root=/var/www"
+        ports:
+          - containerPort: 9102
+            name: metrics
+          # - hostPort: 9102
+            #^ http://kubernetes.io/docs/user-guide/config-best-practices/
+            # > Don’t use hostPort unless absolutely necessary, [..]
+            # http://guoshimin.github.io/2016/06/03/custom-metrics.html
+            # > [..], hence the need for hostPort.
+        volumeMounts:
+          - name: metrics
+            mountPath: /var/www
+      volumes:
+        - name: metrics
+          emptyDir:
+            medium: Memory
+---
+# apiVersion: autoscaling/v1
+# kind: HorizontalPodAutoscaler
+#   #^ http://kubernetes.io/docs/user-guide/horizontal-pod-autoscaling/
+#   # http://guoshimin.github.io/2016/06/03/custom-metrics.html
+# metadata:
+#   name: resolver-scaler
+# spec:
+#   scaleTargetRef:
+#     kind: ReplicaSet
+#     name: resolver
+#   minReplicas: 3
+#   maxReplicas: 10
+#   targetCPUUtilizationPercentage: 50
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resolver
+  namespace: thux
+  labels:
+    app: thux
+    component: resolver
+spec:
+  type: NodePort
+  ports:
+  - port: 9102
+    name: metrics
+  selector:
+    app: thux
+    component: resolver
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tracker
+  namespace: thux
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: thux
+        component: tracker
+      # annotations:
+      #   prometheus.io/scrape: 'true'
+    spec:
+      containers:
+      - name: tracker
+        image: giantswarm/thux-tracker
+        # imagePullPolicy: Always
+        env:
+        - name: TWITTER_TRACKING_QUERY
+          value: http,https
+        - name: TWITTER_CONSUMER_KEY
+          valueFrom:
+            secretKeyRef:
+              name: twitter-api
+              key: twitter-consumer-key
+        - name: TWITTER_CONSUMER_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: twitter-api
+              key: twitter-consumer-secret
+        - name: TWITTER_ACCESS_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: twitter-api
+              key: twitter-access-token
+        - name: TWITTER_ACCESS_TOKEN_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: twitter-api
+              key: twitter-access-token-secret
+        volumeMounts:
+          - name: metrics
+            mountPath: /tmp
+      - name: metrics
+        image: dockermuenster/caddy:0.9
+        command:
+          - "caddy"
+          - "-port=9102"
+          - "-root=/var/www"
+        ports:
+        - containerPort: 9102
+          name: metrics
+        volumeMounts:
+          - name: metrics
+            mountPath: /var/www
+      volumes:
+        - name: metrics
+          emptyDir:
+            medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tracker
+  namespace: thux
+  labels:
+    app: thux
+    component: tracker
+spec:
+  type: NodePort
+  ports:
+  - port: 9102
+    name: metrics
+  selector:
+    app: thux
+    component: tracker
