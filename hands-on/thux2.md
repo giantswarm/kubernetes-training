@@ -1,6 +1,6 @@
 ```bash
 
-minikube start --bootstrapper kubeadm --vm-driver kvm2 --kubernetes-version "v1.10.5" --memory 8192 --cpus 4 \
+minikube start --bootstrapper kubeadm --kubernetes-version "v1.10.5" --memory 8192 --cpus 4 \
   --extra-config=kubelet.authentication-token-webhook=true \
   --extra-config=kubelet.authorization-mode=Webhook \
   --extra-config=scheduler.address=0.0.0.0 \
