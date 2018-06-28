@@ -1,5 +1,7 @@
 ```bash
 
+minikube delete
+
 minikube start --bootstrapper kubeadm --kubernetes-version "v1.10.5" --memory 8192 --cpus 4 \
   --extra-config=kubelet.authentication-token-webhook=true \
   --extra-config=kubelet.authorization-mode=Webhook \
