@@ -64,21 +64,21 @@ minikube dashboard
 ```
 
 ## Install the Logging Stack
+Based on https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch
 ```bash
 # Enable minikube to run fluentd daemonset
 kubectl label node minikube beta.kubernetes.io/fluentd-ds-ready=true
 # Apply fluentd+elasticsearch templates
 kubectl apply --filename https://raw.githubusercontent.com/giantswarm/kubernetes-training/master/hands-on/fluentd-elasticsearch.yaml
 ```
-Example based on https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch
 
 
-View the elasticsearch pod
+View the elasticsearch pod:
 ```bash
 kubectl --namespace kube-system describe pod elasticsearch-logging-0
 ```
 
-Access the elasticsearch logs
+Access the elasticsearch logs:
 ```bash
 kubectl --namespace kube-system logs elasticsearch-logging-0
 ```
@@ -93,11 +93,12 @@ minikube service --namespace kube-system kibana-logging
 
 
 ## Install Prometheus Stack
+Based on https://github.com/coreos/prometheus-operator/tree/master/contrib/kube-prometheus/manifests
 ```bash
 kubectl apply --filename https://raw.githubusercontent.com/giantswarm/kubernetes-training/master/hands-on/kube-prometheus.yaml
 ```
-Based on https://github.com/coreos/prometheus-operator/tree/master/contrib/kube-prometheus/manifests
 
+Open Grafana:
 ```bash
 # login: admin/admin
 minikube service --namespace monitoring grafana
@@ -105,13 +106,15 @@ minikube service --namespace monitoring grafana
 
 
 ## Install Twitter Hot Urls Example
+Based on https://github.com/giantswarm/twitter-hot-urls-example/tree/master/manifests
 ```bash
 kubectl apply --filename https://raw.githubusercontent.com/giantswarm/kubernetes-training/master/hands-on/twitter-hot-urls-example.yaml
 ```
-Based on https://github.com/giantswarm/twitter-hot-urls-example/tree/master/manifests
 
 
 ## Create Twitter Credentials Secrets
+Twitters API needs credentials to be accessed. We store them in form of secrets,
+that our resources have access to.
 ```bash
 kubectl --namespace thux \
   create secret generic twitter-api \
@@ -127,6 +130,7 @@ kubectl --namespace thux \
 kubectl apply --filename ./twitter-secret.yaml
 ```
 
+Scale tracker down to 0 pods.
 ```bash
 kubectl --namespace thux scale deployment tracker --replicas=0
 ```
@@ -136,7 +140,7 @@ kubectl --namespace thux scale deployment tracker --replicas=0
 kubectl apply --filename https://raw.githubusercontent.com/giantswarm/kubernetes-training/master/hands-on/twitter-hot-urls-example-monitoring.yaml
 ```
 
-View thux grafana
+Open thux Grafana:
 ```bash
 minikube service --namespace thux grafana
 ```
