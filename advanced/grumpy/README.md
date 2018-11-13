@@ -68,7 +68,27 @@ $ kubectl create secret generic grumpy \
 
 ## Deploy grumpy server
 
+Now it is time to build the controller and generate the container image. We can download to docker hub to being able to pull from our cluster.
+```
+$ env GOOS=linux GOARCH=amd64 go build .
+$ docker build . -t XXX/grumpy:0.0.1
+$ docker push XXX/grumpy:0.0.1
+```
+
+Finally, we are ready to test our admission controller in a kubernetes cluster. Apply the manifest and check grumpy server runs correctly.
+```
+$ kubectl apply -f manifest
+```
+
 ## Test the validation controller
+
+And once it is running, we can see no pods with a different name from `smooth-app` can be created.
+
+```
+$ kubectl run no-smooth --image=busybox -n default
+
+$ kubectl run smooth-app --image=busybox -n default
+```
 
 ## Explain main code blocks
 
@@ -125,24 +145,4 @@ In case the request name is not the expected one (`smooth-app`), our handler cre
 		},
 	}
 	resp, err := json.Marshal(ar)
-```
-
-Now it is time to build the controller and generate the container image. We can download to docker hub to being able to pull from our cluster.
-```
-$ env GOOS=linux GOARCH=amd64 go build .
-$ docker build . -t XXX/grumpy:0.0.1
-$ docker push XXX/grumpy:0.0.1
-```
-
-Finally, we are ready to test our admission controller in a kubernetes cluster
-```
-$ kubectl apply -f manifest
-```
-
-And once it is running, we can see no pods with a different name from `smooth-app` can be created.
-
-```
-$ kubectl run no-smooth --image=busybox -n default
-
-$ kubectl run smooth-app --image=busybox -n default
 ```
