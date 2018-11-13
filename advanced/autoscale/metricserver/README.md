@@ -35,7 +35,7 @@ kubectl get hpa --watch
 
 In case you have problems with metric server getting the metrics from node, edit the metric server deployment like
 ```bash
-$ kubectl edit deploy metric-server
+$ kubectl -n kube-system edit deploy metric-server
 ```
 
 Add the command lines in the metric server container to allow kubelet insecure calls and resolve the right IP for minikube
@@ -49,7 +49,3 @@ Add the command lines in the metric server container to allow kubelet insecure c
     - --kubelet-insecure-tls
     ...
 ```
-
-
-hackmd for random ephemeral notes:
-  https://hackmd.okfn.de/CGcHugn6TjuEsZPWU7hnxw#
