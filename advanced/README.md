@@ -1,3 +1,4 @@
+# Minikube Setup
 
 ```bash
 
@@ -34,3 +35,6 @@ done
 
 
 ```
+
+Hackpad for random ephemeral public notes:
+  https://hackmd.okfn.de/J_GRcBn9Ssei54Fts75ZxA#
