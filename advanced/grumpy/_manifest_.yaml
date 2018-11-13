@@ -1,0 +1,80 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grumpy
+  namespace: default
+  labels:
+    name: grumpy
+spec:
+  ports:
+  - name: webhook
+    port: 443
+    targetPort: 8080
+  selector:
+    name: grumpy 
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: grumpy
+  namespace: default
+  labels:
+    name: grumpy
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: grumpy 
+      labels:
+        name: grumpy
+    spec:
+      containers:
+        - name: webhook
+          image: pipo02mix/grumpy:1.0.0
+          imagePullPolicy: Always
+          args:
+            - -alsologtostderr
+            - --log_dir=/
+            - -v=10
+            - 2>&1
+          resources:
+            limits:
+              memory: 50Mi
+              cpu: 300m
+            requests:
+              memory: 00Mi
+              cpu: 300m
+          volumeMounts:
+            - name: webhook-certs
+              mountPath: /etc/certs
+              readOnly: true
+            - name: logs
+              mountPath: /tmp
+          securityContext:
+            readOnlyRootFilesystem: true
+      volumes:
+        - name: webhook-certs
+          secret:
+            secretName: grumpy
+        - name: logs
+          emptyDir: {}
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: grumpy
+webhooks:
+  - name: grumpy.pipo02mix.org
+    clientConfig:
+      service:
+        name: grumpy
+        namespace: default
+        path: "/validate"
+      caBundle: "${CA_BUNDLE}"
+    rules:
+      - operations: ["CREATE","UPDATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+    failurePolicy: Ignore
