@@ -31,6 +31,21 @@ kubectl get hpa --watch
 
 ```
 
+#### Troubleshooting 
 
-hackmd for random ephemeral notes:
-  https://hackmd.okfn.de/CGcHugn6TjuEsZPWU7hnxw#
+In case you have problems with metric server getting the metrics from node, edit the metric server deployment like
+```bash
+$ kubectl -n kube-system edit deploy metric-server
+```
+
+Add the command lines in the metric server container to allow kubelet insecure calls and resolve the right IP for minikube
+```yaml
+    ...
+    image: k8s.gcr.io/metrics-server-amd64:v0.3.1
+    imagePullPolicy: Always
+    command:
+    - /metrics-server
+    - --kubelet-preferred-address-types=InternalIP
+    - --kubelet-insecure-tls
+    ...
+```
