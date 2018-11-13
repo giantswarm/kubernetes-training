@@ -1,8 +1,15 @@
 # kube-prometheus
 
+https://github.com/coreos/prometheus-operator/tree/master/contrib/kube-prometheus
+
 https://github.com/jsonnet-bundler/jsonnet-bundler
 
+
+
 ```bash
+
+# Install some dependencies. On Mac `brew` can help out.
+
 # jsonnet
 sudo docker run -v $PWD:/go/bin golang:1.11 \
   sh -c "go get github.com/google/go-jsonnet/jsonnet"
