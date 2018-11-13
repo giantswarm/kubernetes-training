@@ -9,6 +9,8 @@ mkdir $KUBECONFIGS
 
 
 # now bring up the machine!
+# adjust `--vm-driver` for your environment
+# probably `--vm-driver=virtualbox` for windows or mac
 minikube delete ; minikube start --kubernetes-version=v1.12.2 --memory=4096 --bootstrapper=kubeadm --vm-driver kvm2 \
   --extra-config=kubelet.authentication-token-webhook=true \
   --extra-config=kubelet.authorization-mode=Webhook \
