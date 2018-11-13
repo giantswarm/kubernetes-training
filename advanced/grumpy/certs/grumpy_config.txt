@@ -1,0 +1,15 @@
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+[ req_distinguished_name ]
+[ v3_req ]
+basicConstraints=CA:FALSE
+subjectAltName=@alt_names
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+
+[ alt_names ]
+DNS.1 = grumpy
+DNS.2 = grumpy.default
+DNS.3 = grumpy.default.svc
+DNS.4 = grumpy.default.svc.cluster.local
