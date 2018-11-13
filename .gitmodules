@@ -1,3 +1,3 @@
 [submodule "grumpy"]
-	path = grumpy
+	path = advanced/grumpy
 	url = https://github.com/pipo02mix/grumpy
