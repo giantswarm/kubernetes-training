@@ -186,14 +186,16 @@ refresh_token=$(echo "$TOKEN" | jq -r '.refresh_token')
 
 
 # prepare separate kubeconfig for user
-export KUBECONFIG="./kubeconfigs/minikube-oidc-$KEYCLOAK_USERNAME.conf"
+export KUBECONFIG="$KUBECONFIGS/minikube-oidc-$KEYCLOAK_USERNAME.conf"
 
-cp ./kubeconfigs/minikube-cert-admin.conf "$KUBECONFIG"
+cp $KUBECONFIGS/minikube-cert-admin.conf "$KUBECONFIG"
 kubectl config unset users
+
+# FIXME copy $KUBECONFIGS/pki/keycloak-ca.pem
 
 kubectl config set-credentials "minikube" \
   --auth-provider=oidc \
-  --auth-provider-arg=idp-certificate-authority="./pki/keycloak-ca.pem" \
+  --auth-provider-arg=idp-certificate-authority="$KUBECONFIGS/pki/keycloak-ca.pem" \
   --auth-provider-arg=idp-issuer-url="https://$KEYCLOAK_ADDRESS/auth/realms/$KEYCLOAK_AUTH_REALM" \
   --auth-provider-arg=client-id="$KEYCLOAK_CLIENT_ID" \
   --auth-provider-arg=client-secret="$KEYCLOAK_CLIENT_SECRET" \
