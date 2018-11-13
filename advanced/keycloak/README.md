@@ -159,15 +159,19 @@ xdg-open "https://$KEYCLOAK_ADDRESS/auth/admin/"
   #
   #   repeat for "user" with "user@home.office" and group "cluster-users"
       
+# FIXME copy ${KUBECONFIGS}pki/keycloak-ca.pem
+
+mkdir -p ${KUBECONFIGS}pki/
+cp ./pki/keycloak-ca.pem ${KUBECONFIGS}pki/keycloak-ca.pem
 
 
-KEYCLOAK_CLIENT_SECRET="dc8d862f-8a2d-4883-99a5-20cb34764a96"
+KEYCLOAK_CLIENT_SECRET="0408cc36-a7ac-4bcd-8e9a-e2da5560f2f3"
 
-KEYCLOAK_USERNAME="admin"
-KEYCLOAK_PASSWORD="keycloak"
-
-# KEYCLOAK_USERNAME="user"
+# KEYCLOAK_USERNAME="admin"
 # KEYCLOAK_PASSWORD="keycloak"
+
+KEYCLOAK_USERNAME="user"
+KEYCLOAK_PASSWORD="keycloak"
 
 TOKEN=$(curl -k -s "https://$KEYCLOAK_ADDRESS/auth/realms/$KEYCLOAK_AUTH_REALM/protocol/openid-connect/token" \
   -d grant_type=password \
@@ -186,16 +190,15 @@ refresh_token=$(echo "$TOKEN" | jq -r '.refresh_token')
 
 
 # prepare separate kubeconfig for user
-export KUBECONFIG="$KUBECONFIGS/minikube-oidc-$KEYCLOAK_USERNAME.conf"
+export KUBECONFIG="${KUBECONFIGS}minikube-oidc-$KEYCLOAK_USERNAME.conf"
 
-cp $KUBECONFIGS/minikube-cert-admin.conf "$KUBECONFIG"
+cp ${KUBECONFIGS}minikube-cert-admin.conf "$KUBECONFIG"
 kubectl config unset users
 
-# FIXME copy $KUBECONFIGS/pki/keycloak-ca.pem
 
 kubectl config set-credentials "minikube" \
   --auth-provider=oidc \
-  --auth-provider-arg=idp-certificate-authority="$KUBECONFIGS/pki/keycloak-ca.pem" \
+  --auth-provider-arg=idp-certificate-authority="${KUBECONFIGS}pki/keycloak-ca.pem" \
   --auth-provider-arg=idp-issuer-url="https://$KEYCLOAK_ADDRESS/auth/realms/$KEYCLOAK_AUTH_REALM" \
   --auth-provider-arg=client-id="$KEYCLOAK_CLIENT_ID" \
   --auth-provider-arg=client-secret="$KEYCLOAK_CLIENT_SECRET" \
@@ -203,12 +206,12 @@ kubectl config set-credentials "minikube" \
   --auth-provider-arg=refresh-token="$refresh_token"
 
 
-export KUBECONFIG=./kubeconfigs/minikube-cert-admin.conf 
+export KUBECONFIG=${KUBECONFIGS}minikube-cert-admin.conf 
 
-export KUBECONFIG=./kubeconfigs/minikube-oidc-user.conf
+export KUBECONFIG=${KUBECONFIGS}minikube-oidc-user.conf
 kubectl delete pods busybox
 
-export KUBECONFIG=./kubeconfigs/minikube-oidc-admin.conf
+export KUBECONFIG=${KUBECONFIGS}minikube-oidc-admin.conf
 
 ```
 
