@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: keycloak
+commonAnnotations:
+  contact: tobias@giantswarm.io
+  
+bases:
+- ../base
+resources:
+- namespace.yaml
+patchesStrategicMerge:
+- keycloak-admin-user-secret_patch.yaml
+- keycloak-service_patch.yaml
+- keycloak-ingress_patch.yaml
+- postgresql-secret_patch.yaml
+- postgresql-volume_patch.yaml

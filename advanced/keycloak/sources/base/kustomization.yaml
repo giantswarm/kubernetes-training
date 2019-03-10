@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: keycloak
+
+# https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/
+commonLabels:
+  app.kubernetes.io/part-of: keycloak
+
+resources:
+# - 0-namespace.yaml
+- cluster-role-oidc-mapping.yaml
+- keycloak.yaml
+- postgres.yaml
+# - realm.yaml

@@ -1,0 +1,173 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/component: server
+  annotations:
+    certmanager.k8s.io/cluster-issuer: letsencrypt
+    kubernetes.io/tls-acme: "true"
+spec:
+  rules:
+  - host: keycloak.codeformuenster.org
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: keycloak
+          servicePort: http
+  tls:
+  - secretName: keycloak-cert
+    hosts:
+    - keycloak.codeformuenster.org
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/component: server
+spec:
+  # type: ClusterIP
+  # clusterIP: None
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: http
+  selector:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/component: server
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keycloak-admin-user
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/component: server
+type: Opaque
+data:
+  # password for admin web-interface `keycloak`
+  # https://keycloak.codeformuenster.org/auth/admin/
+  password: KUSTOMIZEME
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/component: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: keycloak
+      app.kubernetes.io/component: server
+  serviceName: keycloak
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: keycloak
+        app.kubernetes.io/component: server
+    spec:
+      initContainers:
+      - name: wait-for-postgresql
+        image: alpine:3.7
+        imagePullPolicy: IfNotPresent
+        command:
+        - sh
+        - -c
+        - |
+          until printf "." && nc -z -w 2 postgres 5432; do
+            sleep 2;
+          done;
+          echo 'PostgreSQL OK ✓'
+      containers:
+      - name: keycloak
+        image: jboss/keycloak:4.8.3.Final
+        env:
+        # - name: JGROUPS_DISCOVERY_PROTOCOL
+        #   value: dns.DNS_PING
+        # - name: JGROUPS_DISCOVERY_PROPERTIES
+        #   value: dns_query=keycloak
+        #   # value: dns_query=keycloak.myproject.svc.cluster.local
+        - name: KEYCLOAK_USER
+          value: keycloak
+        - name: KEYCLOAK_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: keycloak-admin-user
+        - name: DB_VENDOR
+          value: postgres
+        - name: DB_ADDR
+          value: postgres
+        - name: DB_PORT
+          value: "5432"
+        - name: POSTGRES_PORT
+          value: "5432"
+          #^ because of https://github.com/helm/charts/issues/9561
+        # - name: POSTGRES_USER
+        #   value: keycloak
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: postgres-password
+              name: postgres
+        # - name: POSTGRES_DATABASE
+        #   value: keycloak
+        - name: PROXY_ADDRESS_FORWARDING
+          value: "true"
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /auth/
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /auth/
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+      restartPolicy: Always
+      securityContext:
+        fsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+      terminationGracePeriodSeconds: 60
+  volumeClaimTemplates:
+  # - metadata:
+  #     labels:
+  #       app.kubernetes.io/part-of: keycloak
+  #     name: data
+  #   spec:
+  #     accessModes:
+  #     - ReadWriteOnce
+  #     resources:
+  #       requests:
+  #         storage: 1Gi
+  #     storageClassName: standard

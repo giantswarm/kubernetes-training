@@ -12,12 +12,115 @@ sudo vi /etc/hosts
 
 # [ make sure minikube according to main README.md is running ]
 
+keycloack.cluster.mini
 
 # declare some keycloak variables
-KEYCLOAK_ADDRESS="keycloak.local-two"
-# KEYCLOAK_ADDRESS="keycloak.devlocal"
-KEYCLOAK_AUTH_REALM="k8s"
-KEYCLOAK_CLIENT_ID="oidckube"
+KEYCLOAK_ADDRESS="keycloak.cluster.mini"
+KEYCLOAK_AUTH_REALM="training-advanced"
+KEYCLOAK_CLIENT_ID="kube-apiserver"
+
+
+##
+https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#download-and-install-cfssl
+
+
+https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#create-a-certificate-signing-request
+
+# needs KEYCLOAK_ADDRESS!
+cat <<EOF | cfssl genkey - | cfssljson -bare server
+{
+  "hosts": ["$KEYCLOAK_ADDRESS"],
+  "CN": "keycloak",
+  "key": {
+    "algo": "ecdsa",
+    "size": 256
+  }
+}
+EOF
+
+# show content
+
+cfssl certinfo -csr server.csr
+
+
+cat <<EOF | kubectl create -f -
+apiVersion: certificates.k8s.io/v1beta1
+kind: CertificateSigningRequest
+metadata:
+  # name: my-svc.my-namespace
+  name: keycloak.keycloak
+spec:
+  groups:
+  - system:authenticated
+  request: $(cat server.csr | base64 | tr -d '\n')
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+  - client auth
+EOF
+
+kubectl get csr keycloak.keycloak -o jsonpath='{.status.certificate}' \
+  | base64 --decode > server.crt
+
+cfssl certinfo -cert server.crt
+
+
+rm ./manifests/*
+
+# FIXME
+kubectl -n keycloak create secret tls keycloak-tls --cert="server.crt" --key="server-key.pem" --dry-run -o yaml \
+  > ./manifests/secret-keycloak-cert.yaml
+
+
+kustomize build ./sources/overlay-training --output ./manifests/kustomized.yaml
+kubectl apply -f ./manifests/
+
+curl --header 'Host: keycloak.cluster.mini'  http://192.168.39.102
+
+
+!!!
+SSL certificate "keycloak/keycloak-tls" does not contain a Common Name or Subject Alternative Name for server "keycloack.cluster.mini": x509: certificate is not valid for any names, but wanted to match keycloack.cluster.mini
+
+# test
+cat << EOF | kubectl apply -f -
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: example-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: hello-world.info
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: web
+          servicePort: 8080
+EOF
+
+
+
+
+# render oidc parameters
+cat <<EOF
+    - --oidc-issuer-url=https://$KEYCLOAK_ADDRESS/auth/realms/$KEYCLOAK_AUTH_REALM
+    - --oidc-client-id=$KEYCLOAK_CLIENT_ID
+    - --oidc-username-claim=email
+    - "--oidc-username-prefix=oidc:"
+    - --oidc-groups-claim=groups
+    - "--oidc-groups-prefix=oidc:"
+    # - --oidc-ca-file=/var/lib/minikube/certs/keycloak-ca.pem
+EOF
+
+
+
+
+
+##
 
 # here?
 minikube_ip=$(minikube ip)
