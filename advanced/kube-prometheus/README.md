@@ -5,20 +5,13 @@ https://github.com/coreos/prometheus-operator/tree/master/contrib/kube-prometheu
 https://github.com/jsonnet-bundler/jsonnet-bundler
 
 
-## Troubleshooting
-
-https://github.com/kubernetes/minikube/issues/1378
-
-minikube ssh -- docker run -i --rm --privileged --pid=host debian nsenter -t 1 -m -u -n -i date -u $(date -u +%m%d%H%M%Y)
-minikube ssh -- docker run -it --rm --privileged --pid=host alpine nsenter -t 1 -m -u -n -i date -u $(date -u +%m%d%H%M%Y.%S)
-minikube ssh -- docker run -i --rm --privileged --pid=host debian nsenter -t 1 -m -u -n -i hwclock -s
-
-minikube ssh -- sudo date -u $(date -u +%m%d%H%M%Y.%S)
-minikube ssh -- sudo hwclock -s
-
-sudo systemctl restart systemd-timesyncd
 
 ```bash
+
+minikube delete ; minikube start --cpus 4 --memory 4096 --vm-driver kvm2 \
+  --extra-config=kubelet.authentication-token-webhook=true \
+  --extra-config=kubelet.rotate-server-certificates=true
+
 
 # Install some dependencies. On Mac `brew` can help out.
 
@@ -75,13 +68,18 @@ kubectl -n monitoring logs -f prometheus-adapter-d8bf44f59-mxzpg
 
 kubectl top node
 
-
 ```
 
-# --extra-config=kubelet.authentication-token-webhook=true
-# at least needed for metrics-server or prometheus-adapter
 
-minikube delete ; minikube start --cpus 4 --memory 4096 --vm-driver kvm2 \
-  --extra-config=kubelet.authentication-token-webhook=true \
-  --extra-config=kubelet.rotate-server-certificates=true
+## Troubleshooting
 
+https://github.com/kubernetes/minikube/issues/1378
+
+minikube ssh -- docker run -i --rm --privileged --pid=host debian nsenter -t 1 -m -u -n -i date -u $(date -u +%m%d%H%M%Y)
+minikube ssh -- docker run -it --rm --privileged --pid=host alpine nsenter -t 1 -m -u -n -i date -u $(date -u +%m%d%H%M%Y.%S)
+minikube ssh -- docker run -i --rm --privileged --pid=host debian nsenter -t 1 -m -u -n -i hwclock -s
+
+minikube ssh -- sudo date -u $(date -u +%m%d%H%M%Y.%S)
+minikube ssh -- sudo hwclock -s
+
+sudo systemctl restart systemd-timesyncd

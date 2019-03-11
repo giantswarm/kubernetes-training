@@ -7,7 +7,7 @@ local kp =
     _config+:: {
       namespace: 'monitoring',
       alertmanager+:: {
-        config: importstr 'alertmanager-config.yaml',
+        // config: importstr 'alertmanager-config.yaml',
       },
       grafana+:: {
         config: {  // http://docs.grafana.org/installation/configuration/
@@ -56,4 +56,5 @@ local kp =
 { ['kube-state-metrics-' + name]: kp.kubeStateMetrics[name] for name in std.objectFields(kp.kubeStateMetrics) } +
 { ['alertmanager-' + name]: kp.alertmanager[name] for name in std.objectFields(kp.alertmanager) } +
 { ['prometheus-' + name]: kp.prometheus[name] for name in std.objectFields(kp.prometheus) } +
+{ ['prometheus-adapter-' + name]: kp.prometheusAdapter[name] for name in std.objectFields(kp.prometheusAdapter) } +
 { ['grafana-' + name]: kp.grafana[name] for name in std.objectFields(kp.grafana) }
