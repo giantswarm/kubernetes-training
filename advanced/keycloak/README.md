@@ -3,40 +3,27 @@ https://medium.com/@mrbobbytables/kubernetes-day-2-operations-authn-authz-with-o
 
 
 ```bash
-
 # delete old files and clean up `/etc/hosts`
-rm ./pki/keycloak*
-rm ./kubeconfigs/*
-sudo vi /etc/hosts
-
+rm ./server*
+rm ./kubeconfig*
+cat /etc/hosts
 
 # [ make sure minikube according to main README.md is running ]
 
 
 # declare some keycloak variables
-KEYCLOAK_ADDRESS="keycloak.local-two"
-# KEYCLOAK_ADDRESS="keycloak.devlocal"
-KEYCLOAK_AUTH_REALM="k8s"
-KEYCLOAK_CLIENT_ID="oidckube"
+KEYCLOAK_ADDRESS_INGRESS="keycloak.cluster.mini"
+# KEYCLOAK_ADDRESS_SERVICE="keycloak.keycloak.svc"
+KEYCLOAK_AUTH_REALM="training-advanced"
+KEYCLOAK_CLIENT_ID="kube-apiserver"
 
-# here?
-minikube_ip=$(minikube ip)
-echo "$minikube_ip $KEYCLOAK_ADDRESS" | sudo tee --append /etc/hosts
+# https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/#download-and-install-cfssl
 
 
-# test dns lookup
-ping $KEYCLOAK_ADDRESS
-minikube ssh ping $KEYCLOAK_ADDRESS
-
-kubectl create -f https://k8s.io/examples/admin/dns/busybox.yaml
-kubectl exec -ti busybox -- nslookup $KEYCLOAK_ADDRESS
-
-
-# render `keycloak.json`
-cat <<EOF > ./pki/keycloak.json
+cat <<EOF | cfssl genkey - | cfssljson -bare server
 {
-  "CN": "keycloak",
-  "hosts": ["$KEYCLOAK_ADDRESS"],
+  "hosts": ["$KEYCLOAK_ADDRESS_INGRESS"],
+  "CN": "$KEYCLOAK_ADDRESS_INGRESS",
   "key": {
     "algo": "ecdsa",
     "size": 256
@@ -44,193 +31,262 @@ cat <<EOF > ./pki/keycloak.json
 }
 EOF
 
-# generate all these pem files
-cfssl gencert -initca "pki/ca-csr.json" | cfssljson -bare "pki/keycloak-ca" -
-cfssl gencert \
-  -ca="pki/keycloak-ca.pem" \
-  -ca-key="pki/keycloak-ca-key.pem" \
-  -config="pki/ca-config.json" \
-  -profile=server \
-  "pki/keycloak.json" | cfssljson -bare "pki/keycloak"
+cfssl certinfo -csr server.csr
 
 
-# place `keycloak-ca.pem` on the machine for the kube-apiserver
-cat "./pki/keycloak-ca.pem" | ssh -t -q -o StrictHostKeyChecking=no \
-  -i "$(minikube ssh-key)" "docker@$(minikube ip)" 'cat - | sudo tee /var/lib/minikube/certs/keycloak-ca.pem'
+cat <<EOF | kubectl create -f -
+apiVersion: certificates.k8s.io/v1beta1
+kind: CertificateSigningRequest
+metadata:
+  # name: my-svc.my-namespace
+  name: keycloak
+spec:
+  groups:
+  - system:authenticated
+  request: $(cat server.csr | base64 | tr -d '\n')
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+  - client auth
+EOF
 
-  # this does not work :-/
-  # cat "./pki/keycloak-ca.pem" | minikube ssh 'cat - | sudo tee /var/lib/minikube/certs/keycloak-ca.pem'
+kubectl get csr keycloak -o jsonpath='{.status.certificate}' \
+  | base64 --decode > server.crt
 
+cfssl certinfo -cert server.crt
+
+
+kubectl -n keycloak create secret tls keycloak-tls --cert="server.crt" --key="server-key.pem" --dry-run -o yaml \
+  > ./manifests/secret-keycloak-cert.yaml
+
+kustomize build ./sources/overlay-training --output ./manifests/kustomized.yaml
+# ignore this warning: "2019/03/10 21:09:56 nil value at `volumeClaimTemplates.metadata.labels` ignored in mutation attempt"
+
+kubectl apply -f ./manifests/
+
+
+curl --insecure --header 'Host: keycloak.cluster.mini' https://$(minikube ip)/
+```
+
+
+## Create and configure realm
+
+```bash
+# sudo docker run -ti --entrypoint bash jboss/keycloak:4.8.3.Final
+
+sudo docker run --network=host $PWD/server.crt:/opt/jboss/server.crt -ti --entrypoint bash jboss/keycloak:4.8.3.Final
+
+# client config
+
+  export PATH=$PATH:/opt/jboss/keycloak/bin
+
+  keycloak_base="https://keycloak.cluster.mini"
+  realm="training-advanced"
+
+  keytool -import -noprompt -storepass temp56 -keystore truststore.jks -file server.crt
+  kcadm.sh config truststore --trustpass temp56 truststore.jks
+
+  kcadm.sh config credentials \
+    --server "$keycloak_base/auth" \
+    --realm master \
+    --user keycloak
+
+
+# realms
+  # kcadm.sh create realms -f demorealm.json
+
+  kcadm.sh create realms -b '{
+    "realm": "'"$realm"'",
+    "enabled": true,
+    "sslRequired": "external",
+    "displayName": "Devops Gathering"
+  }'
+
+  # kcadm.sh get "realms/$realm"
+
+# users
+
+  # for user_email in $user_emails; do
+
+  #   kcadm.sh create users -r "$realm" -b '{
+  #     "username": "'"$user_email"'",
+  #     "enabled": true,
+  #     "email" : "'"$user_email"'"
+  #   }'
+  # done
+
+  # kcadm.sh get users -r "$realm"
+
+# groups
+
+  kcadm.sh create groups -r "$realm" -b '{
+    "name": "cluster-users",
+    "path": "/cluster-users"
+  }'
+
+  kcadm.sh create groups -r "$realm" -b '{
+    "name": "cluster-admins",
+    "path": "/cluster-admins"
+  }'
+
+
+# clients / kube-apiserver
+
+  kcadm.sh create clients -r "$realm" -b '{
+    "clientId": "kube-apiserver",
+    "enabled": true,
+    "redirectUris": ["'"$keycloak_base"'/*", "https://gangway.cluster.mini/*"]
+  }'
+
+  kcadm.sh get -r "$realm" clients
+
+  client_uuid=$(kcadm.sh get -r "$realm" clients | jq -r '.[] | select(.clientId == "kube-apiserver") | .id')
+  kcadm.sh get -r "$realm" "clients/$client_uuid"
+
+# clients / kube-apiserver / protocol-mappers
+
+  kcadm.sh create "clients/$client_uuid/protocol-mappers/models" -r "$realm" -b '{
+    "name" : "username",
+    "protocol" : "openid-connect",
+    "protocolMapper" : "oidc-usermodel-property-mapper",
+    "config" : {
+      "user.attribute" : "username",
+      "claim.name" : "preferred_username",
+      "jsonType.label" : "String",
+      "id.token.claim" : "true",
+      "access.token.claim" : "true",
+      "userinfo.token.claim" : "true"
+    }
+  }'
+
+  kcadm.sh create "clients/$client_uuid/protocol-mappers/models" -r "$realm" -b '{
+    "name" : "email",
+    "protocol" : "openid-connect",
+    "protocolMapper" : "oidc-usermodel-property-mapper",
+    "config" : {
+      "user.attribute" : "email",
+      "claim.name" : "email",
+      "jsonType.label" : "String",
+      "userinfo.token.claim" : "true",
+      "id.token.claim" : "true",
+      "access.token.claim" : "true"
+    }
+  }'
+
+  kcadm.sh create "clients/$client_uuid/protocol-mappers/models" -r "$realm" -b '{
+    "name" : "given name",
+    "protocol" : "openid-connect",
+    "protocolMapper" : "oidc-usermodel-property-mapper",
+    "config" : {
+      "user.attribute" : "firstName",
+      "claim.name" : "given_name",
+      "jsonType.label" : "String",
+      "userinfo.token.claim" : "true",
+      "id.token.claim" : "true",
+      "access.token.claim" : "true"
+    }
+  }'
+
+  kcadm.sh create "clients/$client_uuid/protocol-mappers/models" -r "$realm" -b '{
+    "name" : "family name",
+    "protocol" : "openid-connect",
+    "protocolMapper" : "oidc-usermodel-property-mapper",
+    "config" : {
+      "user.attribute" : "lastName",
+      "claim.name" : "family_name",
+      "jsonType.label" : "String",
+      "userinfo.token.claim" : "true",
+      "id.token.claim" : "true",
+      "access.token.claim" : "true"
+    }
+  }'
+
+  kcadm.sh create "clients/$client_uuid/protocol-mappers/models" -r "$realm" -b '{
+    "name" : "full name",
+    "protocol" : "openid-connect",
+    "protocolMapper" : "oidc-full-name-mapper",
+    "config" : {
+      "userinfo.token.claim" : "true",
+      "id.token.claim" : "true",
+      "access.token.claim" : "true"
+    }
+  }'
+
+  kcadm.sh create "clients/$client_uuid/protocol-mappers/models" -r "$realm" -b '{
+    "name" : "groups",
+    "protocol" : "openid-connect",
+    "protocolMapper" : "oidc-group-membership-mapper",
+    "config" : {
+      "claim.name" : "groups",
+      "full.path" : "true",
+      "id.token.claim" : "true",
+      "access.token.claim" : "true",
+      "userinfo.token.claim" : "true"
+    }
+  }'
+
+
+# identity provider gitthub
+
+  # kcadm.sh create identity-provider/instances \
+  #   -r demorealm \
+  #   -s alias=github \
+  #   -s providerId=github \
+  #   -s enabled=true \
+  #   -s 'config.useJwksUrl="true"' \
+  #   -s config.clientId=GITHUB_CLIENT_ID \
+  #   -s config.clientSecret=GITHUB_CLIENT_SECRET
+
+
+# client-secret
+
+  kcadm.sh get -r "$realm" "clients/$client_uuid/client-secret"
+
+```
+
+
+## Add OIDC parameters to kube-apiserver
+
+```bash
 # render oidc parameters
 cat <<EOF
-    - --oidc-issuer-url=https://$KEYCLOAK_ADDRESS/auth/realms/$KEYCLOAK_AUTH_REALM
+    - --oidc-issuer-url=https://$KEYCLOAK_ADDRESS_INGRESS/auth/realms/$KEYCLOAK_AUTH_REALM
     - --oidc-client-id=$KEYCLOAK_CLIENT_ID
     - --oidc-username-claim=email
     - "--oidc-username-prefix=oidc:"
     - --oidc-groups-claim=groups
     - "--oidc-groups-prefix=oidc:"
-    - --oidc-ca-file=/var/lib/minikube/certs/keycloak-ca.pem
+    - --oidc-ca-file=/var/lib/minikube/certs/ca.crt
 EOF
 
-
-# enter minikube and add parameters to the kube-apiserver.yaml manifest
-minikube ssh \
-  sudo vi /etc/kubernetes/manifests/kube-apiserver.yaml
-
-kubectl -n kube-system get pods kube-apiserver-minikube -o yaml
-
-minikube ssh -- cat /var/lib/minikube/certs/ca.crt | openssl x509 -in - -noout -text
-minikube ssh -- cat /var/lib/minikube/certs/keycloak-ca.pem | openssl x509 -in - -noout -text
-
-kubectl -n kube-system logs -f kube-apiserver-minikube
-
-# # ensure our ingress-controller is running
-# kubectl apply -f ../ingress-nginx/ingress-nginx.yaml
-
-# # add minikube ip to `/etc/hosts`
-# minikube_ip=$(minikube ip)
-# echo "$minikube_ip $KEYCLOAK_ADDRESS" | sudo tee --append /etc/hosts
-
-
-# render ingress
-cat <<EOF > ./manifests/ing-keycloak.yaml
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: keycloak
-  namespace: keycloak
-  labels:
-    app: keycloak
-    component: keycloak
-spec:
-  rules:
-  - host: $KEYCLOAK_ADDRESS
-    http:
-      paths:
-      - backend:
-          serviceName: keycloak
-          servicePort: http
-        path: /
-  tls:
-  - secretName: keycloak-cert
-    hosts:
-    - $KEYCLOAK_ADDRESS
-EOF
-
-
-kubectl -n keycloak create secret tls keycloak-cert --cert="pki/keycloak.pem" --key="pki/keycloak-key.pem" --dry-run -o yaml \
-  > ./manifests/secret-keycloak-cert.yaml
-
-# now start keycloak
-kubectl apply -f ./manifests
-
-kubectl get --all-namespaces pods --watch
-
-
-# open keycloak admin and enter `keycloak`, `keycloak` and click some configuraion
-xdg-open "https://$KEYCLOAK_ADDRESS/auth/admin/"
-
-  # create realm
-  #   https://$KEYCLOAK_ADDRESS/auth/admin/master/console/#/create/realm
-  #     Import: k8s-realm-example.json
-  #       [Create]
-  #
-  # https://$KEYCLOAK_ADDRESS/auth/admin/master/console/#/realms/k8s/clients
-  #   Client ID:
-  #     [oidckube]
-  #       Credentials:
-  #         [Regenerate Secret]
-              KEYCLOAK_CLIENT_SECRET="put-secret-here"
-
-  # create the users
-  #   https://$KEYCLOAK_ADDRESS/auth/admin/master/console/#/realms/k8s/users
-  #     [Add user]
-  #       Details:
-  #         Username: admin
-  #         Email: admin@company.mine
-  #           [Save]
-  #       Credentials:
-  #         New Password: keycloak
-  #         Password Confirmation: keycloak
-  #         Temporary: Off
-  #           [Reset Password]
-  #       Groups:
-  #         Join: cluster-admins
-  #
-  #   repeat for "user" with "user@home.office" and group "cluster-users"
-      
-# FIXME copy ${KUBECONFIGS}pki/keycloak-ca.pem
-
-mkdir -p ${KUBECONFIGS}pki/
-cp ./pki/keycloak-ca.pem ${KUBECONFIGS}pki/keycloak-ca.pem
-
-
-KEYCLOAK_CLIENT_SECRET="0408cc36-a7ac-4bcd-8e9a-e2da5560f2f3"
-
-# KEYCLOAK_USERNAME="admin"
-# KEYCLOAK_PASSWORD="keycloak"
-
-KEYCLOAK_USERNAME="user"
-KEYCLOAK_PASSWORD="keycloak"
-
-TOKEN=$(curl -k -s "https://$KEYCLOAK_ADDRESS/auth/realms/$KEYCLOAK_AUTH_REALM/protocol/openid-connect/token" \
-  -d grant_type=password \
-  -d response_type=id_token \
-  -d scope=openid \
-  -d client_id="$KEYCLOAK_CLIENT_ID" \
-  -d client_secret="$KEYCLOAK_CLIENT_SECRET" \
-  -d username="$KEYCLOAK_USERNAME" \
-  -d password="$KEYCLOAK_PASSWORD" \
-  -d totp="$KEYCLOAK_TOTP")
-
-echo "$TOKEN" | jq
-
-id_token=$(echo "$TOKEN" | jq -r '.id_token')
-refresh_token=$(echo "$TOKEN" | jq -r '.refresh_token')
-
-
-# prepare separate kubeconfig for user
-export KUBECONFIG="${KUBECONFIGS}minikube-oidc-$KEYCLOAK_USERNAME.conf"
-
-cp ${KUBECONFIGS}minikube-cert-admin.conf "$KUBECONFIG"
-kubectl config unset users
-
-
-kubectl config set-credentials "minikube" \
-  --auth-provider=oidc \
-  --auth-provider-arg=idp-certificate-authority="${KUBECONFIGS}pki/keycloak-ca.pem" \
-  --auth-provider-arg=idp-issuer-url="https://$KEYCLOAK_ADDRESS/auth/realms/$KEYCLOAK_AUTH_REALM" \
-  --auth-provider-arg=client-id="$KEYCLOAK_CLIENT_ID" \
-  --auth-provider-arg=client-secret="$KEYCLOAK_CLIENT_SECRET" \
-  --auth-provider-arg=id-token="$id_token" \
-  --auth-provider-arg=refresh-token="$refresh_token"
-
-
-export KUBECONFIG=${KUBECONFIGS}minikube-cert-admin.conf 
-
-export KUBECONFIG=${KUBECONFIGS}minikube-oidc-user.conf
-kubectl delete pods busybox
-
-export KUBECONFIG=${KUBECONFIGS}minikube-oidc-admin.conf
-
+minikube ssh
+sudo vi /etc/kubernetes/manifests/kube-apiserver.yaml
 ```
 
 
-## alternative ?
+
+
+## Gangway
 
 ```bash
-# now bring up the machine!
-minikube delete ; minikube start --kubernetes-version=v1.12.2 --memory=4096 --bootstrapper=kubeadm --vm-driver kvm2 \
-  --extra-config=kubelet.authentication-token-webhook=true \
-  --extra-config=kubelet.authorization-mode=Webhook \
-  --extra-config=scheduler.address=0.0.0.0 \
-  --extra-config=controller-manager.address=0.0.0.0 \
-  --mount --mount-string ./pki/keycloak-ca.pem:/var/lib/minikube/certs/keycloak-ca.pem \
-  --extra-config=apiserver.oidc-issuer-url=https://$KEYCLOAK_ADDRESS/auth/realms/$KEYCLOAK_AUTH_REALM \
-  --extra-config=apiserver.oidc-client-id=$KEYCLOAK_CLIENT_ID \
-  --extra-config=apiserver.oidc-username-claim=email \
-  --extra-config=apiserver.oidc-username-prefix="oidc:" \
-  --extra-config=apiserver.oidc-groups-claim=groups \
-  --extra-config=apiserver.oidc-groups-prefix="oidc:" \
-  --extra-config=apiserver.oidc-ca-file=/var/lib/minikube/certs/keycloak-ca.pem
-```
+echo "$(minikube ip) gangway.cluster.mini" | sudo tee --append /etc/hosts
+
+kubectl apply -f ../gangway/gangway.yaml
+
+# secret session-security-key
+kubectl -n gangway create secret generic session-security-key \
+  --from-literal=session-security-key=$(openssl rand -base64 32)
+
+# secret client-secret
+cat << EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: client-secret
+  namespace: gangway
+type: Opaque
+data:
+  client-secret: "$(echo -n 8a743f72-d7f9-4403-972c-c62bff43bd65 | base64)"
+EOF
+

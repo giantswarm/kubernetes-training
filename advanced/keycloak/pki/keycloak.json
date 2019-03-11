@@ -1,8 +1,0 @@
-{
-  "CN": "keycloak",
-  "hosts": ["keycloak.local-one"],
-  "key": {
-    "algo": "ecdsa",
-    "size": 256
-  }
-}
