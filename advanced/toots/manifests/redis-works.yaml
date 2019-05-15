@@ -1,0 +1,145 @@
+# # similar to https://kubernetes.io/docs/tutorials/stateless-application/guestbook/#creating-the-redis-deployment
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: redis
+#   namespace: mastodon-watcher
+#   # recommended labels https://kubernetes.io/docs/concepts/overview/working-with-objects/common-labels/
+#   labels:
+#     # app.kubernetes.io/name: redis
+#     k8s-app: redis
+# spec:
+#   ports:
+#   - name: redis
+#     port: 6379
+#     targetPort: 6379
+#   - name: metrics
+#     port: 9121
+#     targetPort: 9121
+#   selector:
+#     app.kubernetes.io/name: redis
+
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: redis
+#   namespace: mastodon-watcher
+#   labels:
+#     app.kubernetes.io/name: redis
+# spec:
+#   selector:
+#     matchLabels:
+#       app.kubernetes.io/name: redis
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app.kubernetes.io/name: redis
+#       # annotations:
+#       #   prometheus.io/scrape: "true"
+#       #   prometheus.io/port: "9121"
+#     spec:
+#       containers:
+#       - name: redis
+#         image: redis:5.0-alpine@sha256:c8d2a155166857e772e5389a44f2c9cbdabc7e7500123fdb9a04b5181b9756b8
+#         resources:
+#           requests:
+#             cpu: 100m
+#             memory: 100Mi
+#         ports:
+#         - containerPort: 6379
+#       - name: redis-exporter
+#         image: oliver006/redis_exporter:v1.0.0-rc.1
+#         resources:
+#           requests:
+#             cpu: 100m
+#             memory: 100Mi
+#         ports:
+#         - name: metrics
+#           # name: http-metrics
+#           containerPort: 9121
+
+# # FIXME add persistent volume
+# # maybe use statefulset?
+
+# # FIXME reference, maybe https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/running-exporters.md#generic-servicemonitor-example
+# # or https://github.com/helm/charts/tree/master/stable/prometheus-redis-exporter/templates
+# ---
+# apiVersion: monitoring.coreos.com/v1
+# kind: ServiceMonitor
+# metadata:
+#   name: redis
+#   # namespace: mastodon-watcher
+#   namespace: monitoring
+#   labels:
+#     app.kubernetes.io/name: redis
+# spec:
+#   # jobLabel: redis
+#   jobLabel: k8s-app
+#   namespaceSelector:
+#     matchNames:
+#     - mastodon-watcher
+#   selector:
+#     matchLabels:
+#       # app.kubernetes.io/name: redis
+#       k8s-app: redis
+#     # matchExpressions:
+#     # - {key: k8s-app, operator: Exists}
+#   endpoints:
+#   - port: metrics
+#     # path: /metrics
+#     interval: 15s
+#   # targetLabels:
+
+  
+
+# # FIXME reference source
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: Role
+# metadata:
+#   name: prometheus-k8s
+#   # namespace: default
+#   namespace: mastodon-watcher
+# rules:
+# - apiGroups:
+#   - ""
+#   resources:
+#   - services
+#   - endpoints
+#   - pods
+#   verbs:
+#   - get
+#   - list
+#   - watch
+
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: RoleBinding
+# metadata:
+#   name: prometheus-k8s
+#   namespace: mastodon-watcher
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: Role
+#   name: prometheus-k8s
+# subjects:
+# - kind: ServiceAccount
+#   name: prometheus-k8s
+#   namespace: monitoring
+
+
+# ---
+# # FIXME add service-monitor for prometheus
+# # also add https://github.com/oliver006/redis_exporter/blob/master/contrib/sample_collect_script.lua
+# # to scrape list length
+
+# # kubectl -n mastodon-watcher exec redis-78dbb7f6d9-4zfjr redis-cli keys "*"
+
+# # kubectl -n mastodon-watcher exec redis-78dbb7f6d9-4zfjr -- redis-cli --scan --pattern "*"
+
+# # EVAL 'local val="Hello Compose" return val' 0
+# # EVAL 'local val=redis.call("llen", "mastodon") return val' 0
+# # EVAL 'local val=redis.call("llen", ARGV[1]) return val' 0 "mastodon"

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue-muncher
+  namespace: mastodon-watcher
+  labels:
+    app.kubernetes.io/name: queue-muncher
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: queue-muncher
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: queue-muncher
+    spec:
+      containers:
+      - name: queue-muncher
+        image: redis:5.0-alpine@sha256:c8d2a155166857e772e5389a44f2c9cbdabc7e7500123fdb9a04b5181b9756b8
+        command:
+        - sh
+        - -c
+        - |
+          while true; do 
+            redis-cli -h redis rpop mastodon
+            sleep $(shuf -i 20-40 -n 1)
+            # sleep 20
+          done
+        # env:
+        # - name: SLEEP_RANGE
+        #   value: 20-40
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi

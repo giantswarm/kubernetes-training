@@ -1,0 +1,4 @@
+bases:
+- https://github.com/coreos/kube-prometheus?ref=81b9c9f9f6886ba1fbd61b05cdf0cc4f4d95eba8
+patchesStrategicMerge:
+- nodeport-patch.yaml
