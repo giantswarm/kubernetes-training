@@ -9,6 +9,8 @@ rules:
   - namespaces
   - pods
   - services
+  - nodes
   verbs:
   - get
   - list
+  - watch

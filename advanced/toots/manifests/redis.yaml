@@ -153,7 +153,8 @@ subjects:
 
 ---
 
-apiVersion: autoscaling/v2beta1
+# apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: mastodon-watcher
@@ -164,12 +165,46 @@ spec:
     kind: Deployment
     name: mastodon-watcher
   minReplicas: 1
-  maxReplicas: 5
+  maxReplicas: 50
   metrics:
-  - type: Pods
-    pods:
-      metricName: redis_key_size
-      targetAverageValue: 10
+  # - type: Pods
+  #   pods:
+  #     metricName: redis_key_size
+  #     targetAverageValue: 10
+
+  - type: Object
+    object:
+      metric:
+        name: redis_key_size
+      describedObject:
+        # apiVersion: networking.k8s.io/v1beta1
+        # kind: Ingress
+        # name: main-route
+        # apiVersion: apps/v1
+        # kind: Deployment
+        # apiVersion: v1
+        # namespace: mastodon-watcher
+        # kind: Pod
+        kind: Service
+        name: redis
+      target:
+        type: Value
+        value: 10
+
+  # - type: External
+  #   external:
+  #     metric:
+  #       name: redis_key_size
+  #       # selector: "queue=worker_tasks"
+  #     target:
+  #       type: AverageValue
+  #       averageValue: 30
+
+  # - type: Object
+  #   object:
+  #     metric:
+  #       name: http_requests
+  #       selector: verb=GET
 
 # ---
 # apiVersion: autoscaling/v2beta2
